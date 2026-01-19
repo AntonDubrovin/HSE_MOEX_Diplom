@@ -2,6 +2,8 @@ import datetime
 
 import requests
 import pandas as pd
+
+from config.settings import Settings
 from moex_mapper import MOEXMapper
 from src.db.postgres_dao import PostgresDAO
 
@@ -18,7 +20,7 @@ class MOEXRestClient:
         print(list(data.keys()))
         return data
 
-    def get_tqbr_securities(self, params, engine, market):
+    def get_tqbr_securities(self, params, engine, market, moex_mapper):
         url = f"{self.BASE_URL}/engines/{engine}/markets/{market}/boards/TQBR/securities.json"
         data = self.send_request(url=url, params=params)
 
@@ -30,7 +32,7 @@ class MOEXRestClient:
         instruments = []
         for row in rows:
             moex_data = dict(zip(columns, row))
-            instrument = MOEXMapper.to_instrument(moex_data, engine, market)
+            instrument = moex_mapper.to_instrument(moex_data, engine, market)
             instruments.append(instrument)
         return instruments
 
@@ -106,14 +108,16 @@ class MOEXRestClient:
         )
         return df_indices_metadata
 
-    def main(self):
+    def main(self, moex_mapper, settings):
         instruments = self.get_tqbr_securities(
-            params={"securities.columns": "SECID,SECNAME,SHORTNAME,ISIN,SECTYPE,LOTSIZE,CURRENCYID,BOARDID"},
+            params={
+                "securities.columns": "SECID,SECNAME,SHORTNAME,ISIN,SECTYPE,LOTSIZE,CURRENCYID,BOARDID"},
             engine="stock",
             market="shares",
+            moex_mapper=moex_mapper
         )
         print(instruments)
-        postgres_dao = PostgresDAO()
+        postgres_dao = PostgresDAO(settings)
         for instrument in instruments:
             postgres_dao.insert_instrument(instrument)
         print("Вставлены инструменты")
@@ -158,4 +162,6 @@ class MOEXRestClient:
 
 if __name__ == "__main__":
     moex = MOEXRestClient()
-    moex.main()
+    moex_mapper = MOEXMapper()
+    settings = Settings()
+    moex.main(moex_mapper, settings)

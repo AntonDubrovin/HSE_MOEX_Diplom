@@ -1,15 +1,17 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 class Settings:
-    POSTGRES_HOST = "localhost"
-    POSTGRES_PORT = 5432
-    POSTGRES_DB = "moex_oltp"
-    POSTGRES_USER = "admin"
-    POSTGRES_PASSWORD = "admin123"
+    POSTGRES_HOST = os.getenv('POSTGRES_HOST')
+    POSTGRES_PORT = int(os.getenv('POSTGRES_PORT'))
+    POSTGRES_DB = os.getenv('POSTGRES_DB')
+    POSTGRES_USER = os.getenv('POSTGRES_USER')
+    POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
 
-    CLICKHOUSE_HOST = "localhost"
-    CLICKHOUSE_PORT = 9000
-    CLICKHOUSE_DB = "moex_olap"
-    CLICKHOUSE_USER = "admin"
-    CLICKHOUSE_PASSWORD = "admin123"
-
-
-settings = Settings()
+    CLICKHOUSE_HOST = os.getenv('CLICKHOUSE_HOST')
+    CLICKHOUSE_PORT = int(os.getenv('CLICKHOUSE_PORT'))
+    CLICKHOUSE_DB = os.getenv('CLICKHOUSE_DB')
+    CLICKHOUSE_USER = os.getenv('CLICKHOUSE_USER')
+    CLICKHOUSE_PASSWORD = os.getenv('CLICKHOUSE_PASSWORD')

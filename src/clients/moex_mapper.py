@@ -1,10 +1,8 @@
-from typing import Dict, Any
 from src.models.moex_models.instrument import Instrument
 
 
 class MOEXMapper:
-    @staticmethod
-    def to_instrument(moex_data, engine, market):
+    def to_instrument(self, moex_data, engine, market):
         return Instrument(
             secid=moex_data.get("SECID", "").upper(),
             sec_name=moex_data.get("SECNAME"),

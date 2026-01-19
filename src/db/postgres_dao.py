@@ -1,10 +1,9 @@
 import psycopg2
-from config.settings import settings
 from src.models.moex_models.instrument import Instrument
 
 
 class PostgresDAO:
-    def __init__(self):
+    def __init__(self, settings):
         self.connection = psycopg2.connect(
             host=settings.POSTGRES_HOST,
             port=settings.POSTGRES_PORT,
@@ -19,8 +18,7 @@ class PostgresDAO:
 
     def insert_instrument(self, instrument: Instrument):
         query_insert_instrument = """
-            INSERT INTO
-                instruments
+            INSERT INTO instruments
                     (
                         secid,
                         sec_name,
