@@ -13,31 +13,16 @@ class PostgresDAO:
         )
 
     def close(self):
-        self.connection.cursor().close()
         self.connection.close()
 
     def insert_instrument(self, instrument: Instrument):
         query_insert_instrument = """
-            INSERT INTO instruments
-                    (
-                        secid,
-                        sec_name,
-                        sec_type,
-                        short_name,
-                        isin,
-                        lot_size,
-                        currency,
-                        board,
-                        engine,
-                        market
-                    )
-            VALUES
-                (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT
-                (secid)
-            DO
-            UPDATE
-            SET
+            INSERT INTO instruments (
+                secid, sec_name, sec_type, short_name, isin, lot_size,
+                currency, board, engine, market
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (secid) DO UPDATE SET
                 sec_name = EXCLUDED.sec_name,
                 sec_type = EXCLUDED.sec_type,
                 short_name = EXCLUDED.short_name,
@@ -46,19 +31,21 @@ class PostgresDAO:
                 currency = EXCLUDED.currency,
                 board = EXCLUDED.board
         """
+        vals = (
+            instrument.secid,
+            instrument.sec_name,
+            instrument.sec_type,
+            instrument.short_name,
+            instrument.isin,
+            instrument.lot_size,
+            instrument.currency,
+            instrument.board,
+            instrument.engine,
+            instrument.market,
+        )
+        # TODO try execute commit
         self.connection.cursor().execute(
             query_insert_instrument,
-            [
-                instrument.secid,
-                instrument.sec_name,
-                instrument.sec_type,
-                instrument.short_name,
-                instrument.isin,
-                instrument.lot_size,
-                instrument.currency,
-                instrument.board,
-                instrument.engine,
-                instrument.market,
-            ],
+            vals,
         )
         self.connection.commit()

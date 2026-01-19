@@ -111,10 +111,11 @@ class MOEXRestClient:
     def main(self, moex_mapper, settings):
         instruments = self.get_tqbr_securities(
             params={
-                "securities.columns": "SECID,SECNAME,SHORTNAME,ISIN,SECTYPE,LOTSIZE,CURRENCYID,BOARDID"},
+                "securities.columns": "SECID,SECNAME,SHORTNAME,ISIN,SECTYPE,LOTSIZE,CURRENCYID,BOARDID"
+            },
             engine="stock",
             market="shares",
-            moex_mapper=moex_mapper
+            moex_mapper=moex_mapper,
         )
         print(instruments)
         postgres_dao = PostgresDAO(settings)
