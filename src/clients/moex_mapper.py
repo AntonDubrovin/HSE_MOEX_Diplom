@@ -8,7 +8,7 @@ class MOEXMapper:
         return Instrument(
             secid=moex_data.get("SECID", "").upper(),
             sec_name=moex_data.get("SECNAME"),
-            # TODO добавить sectype
+            sec_type=moex_data.get("SECTYPE"),
             short_name=moex_data.get("SHORTNAME", ""),
             lot_size=moex_data.get("LOTSIZE", 1),
             currency=moex_data.get("CURRENCYID", "SUR"),

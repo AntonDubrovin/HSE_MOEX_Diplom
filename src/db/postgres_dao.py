@@ -24,6 +24,7 @@ class PostgresDAO:
                     (
                         secid,
                         sec_name,
+                        sec_type,
                         short_name,
                         isin,
                         lot_size,
@@ -33,13 +34,14 @@ class PostgresDAO:
                         market
                     )
             VALUES
-                (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT
                 (secid)
             DO
             UPDATE
             SET
                 sec_name = EXCLUDED.sec_name,
+                sec_type = EXCLUDED.sec_type,
                 short_name = EXCLUDED.short_name,
                 isin = EXCLUDED.isin,
                 lot_size = EXCLUDED.lot_size,
@@ -51,6 +53,7 @@ class PostgresDAO:
             [
                 instrument.secid,
                 instrument.sec_name,
+                instrument.sec_type,
                 instrument.short_name,
                 instrument.isin,
                 instrument.lot_size,
