@@ -16,19 +16,19 @@ class PostgresDAO:
 
     def insert_instruments(self, instruments):
         data_to_insert_instruments = []
-        for inst in instruments:
+        for instrument in instruments:
             data_to_insert_instruments.append(
                 (
-                    inst.secid,
-                    inst.sec_name,
-                    inst.sec_type,
-                    inst.short_name,
-                    inst.isin,
-                    inst.lot_size,
-                    inst.currency,
-                    inst.board,
-                    inst.engine,
-                    inst.market,
+                    instrument.secid,
+                    instrument.sec_name,
+                    instrument.sec_type,
+                    instrument.short_name,
+                    instrument.isin,
+                    instrument.lot_size,
+                    instrument.currency,
+                    instrument.board,
+                    instrument.engine,
+                    instrument.market,
                 )
             )
 
