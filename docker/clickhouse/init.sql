@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS moex_olap.sec_types ( -- справочник тип�
 ORDER BY sec_type;
 
 INSERT INTO
-    sec_types
+    moex_olap.sec_types
         (
             sec_type,
             name
