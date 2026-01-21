@@ -1,11 +1,5 @@
-import datetime
-
 import requests
 import pandas as pd
-
-from config.settings import Settings
-from moex_mapper import MOEXMapper
-from src.db.postgres_dao import PostgresDAO
 
 
 class MOEXRestClient:
@@ -107,62 +101,3 @@ class MOEXRestClient:
             data["securities"]["data"], columns=data["securities"]["columns"]
         )
         return df_indices_metadata
-
-    def main(self, moex_mapper, settings):
-        instruments = self.get_tqbr_securities(
-            params={
-                "securities.columns": "SECID,SECNAME,SHORTNAME,ISIN,SECTYPE,LOTSIZE,CURRENCYID,BOARDID"
-            },
-            engine="stock",
-            market="shares",
-            moex_mapper=moex_mapper,
-        )
-        print(instruments)
-        postgres_dao = PostgresDAO(settings)
-        for instrument in instruments:
-            postgres_dao.insert_instrument(instrument)
-        print("Вставлены инструменты")
-        # candles_by_security = self.get_candles_by_security(
-        #     secid="SBER",
-        #     params={"from": "2026-01-01", "till": "2026-01-31", "interval": 1},
-        #     engine="stock",
-        #     market="shares",
-        # )
-        # indices_metadata = self.get_indices_metadata(
-        #     params={"boardid": "SNDX"},
-        #     engine="stock",
-        #     market="index",
-        # )
-        # corporate_actions_by_security = self.get_dividends_by_security(secid="SBER", params={})
-        # daily_aggregates_by_security = self.get_info_by_security(
-        #     secid="SBER",
-        #     params={"date": "2026-01-14"},
-        #     engine="stock",
-        #     market="shares",
-        # )
-        # current_indices = self.get_current_indices(
-        #     params={
-        #         "boardid": "SNDX",
-        #         "marketdata.columns": "SECID,BOARDID,CURRENTVALUE,LASTCHANGEPRC,OPENVALUE,LASTVALUE,HIGH,LOW,VALTODAY,CAPITALIZATION,UPDATETIME,TRADEDATE",
-        #     },
-        #     engine="stock",
-        #     market="index",
-        # )
-        # index_history = self.get_index_history(
-        #     params={
-        #         "boardid": "SNDX",
-        #         "secid": "IMOEX",
-        #         "from": "2026-01-01",
-        #         "till": "2026-01-31",
-        #         "history.columns": "TRADEDATE,SECID,BOARDID,OPEN,HIGH,LOW,CLOSE,VALUE,CAPITALIZATION,CURRENCYID,TRADINGSESSION,RECALC_DATE",
-        #     },
-        #     engine="stock",
-        #     market="index",
-        # )
-
-
-if __name__ == "__main__":
-    moex = MOEXRestClient()
-    moex_mapper = MOEXMapper()
-    settings = Settings()
-    moex.main(moex_mapper, settings)
