@@ -57,5 +57,5 @@ class ClickHouseDAO:
         self.client.execute(query_insert_instruments, data_to_insert_instruments)
 
         # TODO optimize в else
-        query_optimize_instruments_ref = "OPTIMIZE TABLE instruments_ref FINAL"
+        query_optimize_instruments_ref = "OPTIMIZE TABLE moex_olap.instruments_ref FINAL"
         self.client.execute(query_optimize_instruments_ref)
