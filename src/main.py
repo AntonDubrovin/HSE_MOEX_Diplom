@@ -5,7 +5,7 @@ from src.db.postgres_dao import PostgresDAO
 from src.clients.moex_rest_client import MOEXRestClient
 
 
-def get_instruments(moex_rest_client, postgres_dao, clickhouse_dao):
+def get_instruments(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper):
     instruments = moex_rest_client.get_tqbr_securities(
         params={
             "securities.columns": "SECID,SECNAME,SHORTNAME,ISIN,SECTYPE,LOTSIZE,CURRENCYID,BOARDID"
@@ -23,6 +23,35 @@ def get_instruments(moex_rest_client, postgres_dao, clickhouse_dao):
     print("Вставлены инструменты в clickhouse")
 
 
+def get_indices(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper):
+    indices = moex_rest_client.get_indices(
+        params={"indices.colums": "indexid,shortname"},
+        engine="stock",
+        market="index",
+        moex_mapper=moex_mapper,
+    )
+    print(indices)
+
+    postgres_dao.insert_indices(indices)
+    print("Вставлены индексы в postgres")
+
+    clickhouse_dao.insert_indices(indices)
+    print("Вставлены индексы в clickhouse")
+
+
+def get_current_prices(moex_rest_client, postgres_dao, moex_mapper):
+    current_prices = moex_rest_client.get_current_prices(
+        params={"marketdata.columns": "SECID,LAST,VOLTODAY,LASTTOPREVPRICE"},
+        engine="stock",
+        market="shares",
+        moex_mapper=moex_mapper,
+    )
+    print(current_prices)
+
+    postgres_dao.insert_current_prices(current_prices)
+    print("Вставлены текущие цены в postgres")
+
+
 if __name__ == "__main__":
     moex_rest_client = MOEXRestClient()
     moex_mapper = MOEXMapper()
@@ -30,7 +59,9 @@ if __name__ == "__main__":
     postgres_dao = PostgresDAO(settings)
     clickhouse_dao = ClickHouseDAO(settings)
 
-    get_instruments(moex_rest_client, postgres_dao, clickhouse_dao)
+    get_instruments(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper)
+    get_indices(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper)
+    get_current_prices(moex_rest_client, postgres_dao, moex_mapper)
 
     # candles_by_security = moex_rest_client.get_candles_by_security(
     #     secid="SBER",

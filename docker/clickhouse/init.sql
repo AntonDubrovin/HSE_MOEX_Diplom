@@ -50,6 +50,8 @@ PARTITION BY toYYYYMM(trade_date);
 CREATE TABLE moex_olap.indices_ref ( -- справочник индексов
     index_code String,
     index_name String,
+    engine String,
+    market String,
     updated_at DateTime DEFAULT now()
 ) ENGINE = MergeTree()
 ORDER BY index_code;

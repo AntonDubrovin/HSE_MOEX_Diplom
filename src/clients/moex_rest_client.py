@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+from src.clients.moex_urls import MOEXUrls
 
 
 class MOEXRestClient:
@@ -15,7 +16,7 @@ class MOEXRestClient:
         return data
 
     def get_tqbr_securities(self, params, engine, market, moex_mapper):
-        url = f"{self.BASE_URL}/engines/{engine}/markets/{market}/boards/TQBR/securities.json"
+        url = MOEXUrls.TQBR_SECURITIES.format(engine=engine, market=market)
         data = self.send_request(url=url, params=params)
 
         columns = data["securities"]["columns"]
@@ -29,6 +30,39 @@ class MOEXRestClient:
             instrument = moex_mapper.to_instrument(moex_data, engine, market)
             instruments.append(instrument)
         return instruments
+
+    def get_indices(self, params, engine, market, moex_mapper):
+        url = MOEXUrls.INDICES_ANALYTICS.format(engine=engine, market=market)
+        data = self.send_request(url=url, params=params)
+
+        columns = data["indices"]["columns"]
+        rows = data["indices"]["data"]
+        print(f"columns len: {len(columns)}")
+        print(f"rows len: {len(rows)}")
+
+        indices = []
+        for row in rows:
+            moex_data = dict(zip(columns, row))
+            index = moex_mapper.to_index(moex_data, engine, market)
+            indices.append(index)
+        return indices
+
+    def get_current_prices(self, params, engine, market, moex_mapper):
+        url = MOEXUrls.TQBR_SECURITIES.format(engine=engine, market=market)
+        data = self.send_request(url=url, params=params)
+
+        columns = data["marketdata"]["columns"]
+        rows = data["marketdata"]["data"]
+        print(f"columns len: {len(columns)}")
+        print(f"rows len: {len(rows)}")
+
+        current_prices = []
+        for row in rows:
+            moex_data = dict(zip(columns, row))
+            current_price = moex_mapper.to_current_price(moex_data)
+            if current_price:
+                current_prices.append(current_price)
+        return current_prices
 
     def get_statistics_analytics(self, params, engine, market):
         url = f"{self.BASE_URL}/statistics/engines/{engine}/markets/{market}/analytics.json"
@@ -90,14 +124,3 @@ class MOEXRestClient:
 
         df_index_history = pd.DataFrame(data["history"]["data"], columns=data["history"]["columns"])
         return df_index_history
-
-    def get_indices_metadata(self, params, engine, market):
-        # print("start get_indices_metadata")
-        url = f"{self.BASE_URL}/engines/{engine}/markets/{market}/analytics.json"
-        data = self.send_request(url=url, params=params)
-        print(data["securities"]["columns"])
-
-        df_indices_metadata = pd.DataFrame(
-            data["securities"]["data"], columns=data["securities"]["columns"]
-        )
-        return df_indices_metadata

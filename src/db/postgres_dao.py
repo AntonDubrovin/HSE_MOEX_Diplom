@@ -65,3 +65,73 @@ class PostgresDAO:
         )
         # todo else commit
         self.connection.commit()
+
+    def insert_indices(self, indices):
+        data_to_insert_indices = []
+        for index in indices:
+            data_to_insert_indices.append(
+                (
+                    index.index_code,
+                    index.index_name,
+                    index.engine,
+                    index.market,
+                )
+            )
+
+        query_insert_indices = (
+            "INSERT INTO indices "
+            "( "
+            " index_code, "
+            " index_name, "
+            " engine, "
+            " market "
+            ") "
+            "VALUES (%s, %s, %s, %s) "
+            "ON CONFLICT (index_code) DO "
+            "UPDATE SET "
+            " index_name = EXCLUDED.index_name, "
+            " engine = EXCLUDED.engine, "
+            " market = EXCLUDED.market, "
+            " updated_at = NOW()"
+        )
+
+        # TODO try execute
+        self.connection.cursor().executemany(query_insert_indices, data_to_insert_indices)
+        # todo else commit
+        self.connection.commit()
+
+    def insert_current_prices(self, current_prices):
+        data_to_insert_current_prices = []
+        for price in current_prices:
+            data_to_insert_current_prices.append(
+                (
+                    price.secid,
+                    price.price,
+                    price.volume,
+                    price.change,
+                )
+            )
+
+        query_insert_current_prices = (
+            "INSERT INTO current_prices "
+            "( "
+            " secid, "
+            " price, "
+            " volume, "
+            " change "
+            ") "
+            "VALUES (%s, %s, %s, %s) "
+            "ON CONFLICT (secid) DO "
+            "UPDATE SET "
+            " price = EXCLUDED.price, "
+            " volume = EXCLUDED.volume, "
+            " change = EXCLUDED.change, "
+            " updated_at = NOW()"
+        )
+
+        # TODO try execute
+        self.connection.cursor().executemany(
+            query_insert_current_prices, data_to_insert_current_prices
+        )
+        # todo else commit
+        self.connection.commit()

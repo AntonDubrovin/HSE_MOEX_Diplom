@@ -52,9 +52,9 @@ CREATE INDEX idx_instruments_secid ON instruments(secid);
 CREATE TABLE current_prices ( -- текущие цены
     secid VARCHAR(20) PRIMARY KEY,
     price NUMERIC(18,6),
-    volume INTEGER,
+    volume BIGINT,
     change NUMERIC(10,4),
-    last_update TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
 
     CONSTRAINT fk_current_prices_secid FOREIGN KEY (secid) REFERENCES instruments(secid)
 );
@@ -62,6 +62,8 @@ CREATE TABLE current_prices ( -- текущие цены
 CREATE TABLE indices ( -- справочник индексов
     index_code VARCHAR(20) PRIMARY KEY,
     index_name VARCHAR(100),
+    engine VARCHAR(20),
+    market VARCHAR(20),
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -80,7 +82,7 @@ CREATE TABLE current_indices ( -- текущие значения индексо
     capitalization NUMERIC(18,2),
     update_time TIME,
     trade_date DATE,
-    last_update TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
 
     CONSTRAINT fk_current_indices_code FOREIGN KEY (index_code) REFERENCES indices(index_code)
 );
@@ -90,7 +92,7 @@ CREATE TABLE market_status ( -- статус торгов
     status VARCHAR(20),
     open_time TIME,
     close_time TIME,
-    last_update TIMESTAMP DEFAULT NOW()
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE corporate_actions ( -- корпоративные действия

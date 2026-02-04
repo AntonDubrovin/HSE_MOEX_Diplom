@@ -59,3 +59,33 @@ class ClickHouseDAO:
         # TODO optimize в else
         query_optimize_instruments_ref = "OPTIMIZE TABLE moex_olap.instruments_ref FINAL"
         self.client.execute(query_optimize_instruments_ref)
+
+    def insert_indices(self, indices):
+        data_to_insert_indices = []
+        for index in indices:
+            data_to_insert_indices.append(
+                {
+                    "index_code": index.index_code,
+                    "index_name": index.index_name,
+                    "engine": index.engine,
+                    "market": index.market,
+                }
+            )
+
+        query_insert_indices = (
+            "INSERT INTO moex_olap.indices_ref "
+            "("
+            " index_code, "
+            " index_name, "
+            " engine, "
+            " market "
+            ") "
+            "VALUES "
+        )
+
+        # TODO try execute
+        self.client.execute(query_insert_indices, data_to_insert_indices)
+
+        # TODO optimize в else
+        query_optimize_indices_ref = "OPTIMIZE TABLE moex_olap.indices_ref FINAL"
+        self.client.execute(query_optimize_indices_ref)
