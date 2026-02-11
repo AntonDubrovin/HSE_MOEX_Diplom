@@ -15,8 +15,8 @@ class MOEXRestClient:
         print(list(data.keys()))
         return data
 
-    def get_tqbr_securities(self, params, engine, market, moex_mapper):
-        url = MOEXUrls.TQBR_SECURITIES.format(engine=engine, market=market)
+    def get_instruments(self, params, engine, market, moex_mapper, board):
+        url = MOEXUrls.SECURITIES.format(engine=engine, market=market, board=board)
         data = self.send_request(url=url, params=params)
 
         columns = data["securities"]["columns"]
@@ -31,12 +31,12 @@ class MOEXRestClient:
             instruments.append(instrument)
         return instruments
 
-    def get_indices(self, params, engine, market, moex_mapper):
-        url = MOEXUrls.INDICES_ANALYTICS.format(engine=engine, market=market)
+    def get_indices(self, params, engine, market, moex_mapper, board):
+        url = MOEXUrls.SECURITIES.format(engine=engine, market=market, board=board)
         data = self.send_request(url=url, params=params)
 
-        columns = data["indices"]["columns"]
-        rows = data["indices"]["data"]
+        columns = data["securities"]["columns"]
+        rows = data["securities"]["data"]
         print(f"columns len: {len(columns)}")
         print(f"rows len: {len(rows)}")
 
@@ -47,8 +47,8 @@ class MOEXRestClient:
             indices.append(index)
         return indices
 
-    def get_current_prices(self, params, engine, market, moex_mapper):
-        url = MOEXUrls.TQBR_SECURITIES.format(engine=engine, market=market)
+    def get_current_prices(self, params, engine, market, moex_mapper, board):
+        url = MOEXUrls.SECURITIES.format(engine=engine, market=market, board=board)
         data = self.send_request(url=url, params=params)
 
         columns = data["marketdata"]["columns"]
@@ -64,8 +64,8 @@ class MOEXRestClient:
                 current_prices.append(current_price)
         return current_prices
 
-    def get_current_indices(self, params, engine, market, moex_mapper):
-        url = MOEXUrls.CURRENT_INDICES.format(engine=engine, market=market)
+    def get_current_indices(self, params, engine, market, moex_mapper, board):
+        url = MOEXUrls.SECURITIES.format(engine=engine, market=market, board=board)
         data = self.send_request(url=url, params=params)
 
         columns = data["marketdata"]["columns"]

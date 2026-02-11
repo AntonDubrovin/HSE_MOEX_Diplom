@@ -21,8 +21,8 @@ class MOEXMapper:
 
     def to_index(self, moex_data, engine, market):
         return Index(
-            index_code=moex_data.get("indexid").upper(),
-            index_name=moex_data.get("shortname"),
+            index_code=moex_data.get("SECID").upper(),
+            index_name=moex_data.get("SHORTNAME"),
             engine=engine,
             market=market,
         )

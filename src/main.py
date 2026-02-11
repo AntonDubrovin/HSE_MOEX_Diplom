@@ -6,12 +6,13 @@ from src.clients.moex_rest_client import MOEXRestClient
 
 
 def get_instruments(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper):
-    instruments = moex_rest_client.get_tqbr_securities(
+    instruments = moex_rest_client.get_instruments(
         params={
             "securities.columns": "SECID,SECNAME,SHORTNAME,ISIN,SECTYPE,LOTSIZE,CURRENCYID,BOARDID"
         },
         engine="stock",
         market="shares",
+        board="TQBR",
         moex_mapper=moex_mapper,
     )
     print(instruments)
@@ -25,9 +26,10 @@ def get_instruments(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper)
 
 def get_indices(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper):
     indices = moex_rest_client.get_indices(
-        params={"indices.colums": "indexid,shortname"},
+        params={"securities.columns": "SECID,SHORTNAME"},
         engine="stock",
         market="index",
+        board="SNDX",
         moex_mapper=moex_mapper,
     )
     print(indices)
@@ -44,6 +46,7 @@ def get_current_prices(moex_rest_client, postgres_dao, moex_mapper):
         params={"marketdata.columns": "SECID,LAST,VOLTODAY,LASTTOPREVPRICE"},
         engine="stock",
         market="shares",
+        board="TQBR",
         moex_mapper=moex_mapper,
     )
     print(current_prices)
@@ -55,11 +58,11 @@ def get_current_prices(moex_rest_client, postgres_dao, moex_mapper):
 def get_current_indices(moex_rest_client, postgres_dao, moex_mapper):
     current_indices = moex_rest_client.get_current_indices(
         params={
-            "boardid": "SNDX",
             "marketdata.columns": "SECID,BOARDID,CURRENTVALUE,OPENVALUE,LASTVALUE,LASTCHANGEPRC,LASTCHANGE,HIGH,LOW,VALTODAY,CAPITALIZATION,UPDATETIME,TRADEDATE",
         },
         engine="stock",
         market="index",
+        board="SNDX",
         moex_mapper=moex_mapper,
     )
     print(current_indices)

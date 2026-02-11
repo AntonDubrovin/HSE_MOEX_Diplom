@@ -1,15 +1,13 @@
 class MOEXUrls:
     BASE_URL = "https://iss.moex.com/iss"
 
-    TQBR_SECURITIES = (
-        f"{BASE_URL}/engines/{{engine}}/markets/{{market}}/boards/TQBR/securities.json"
+    SECURITIES = (
+        f"{BASE_URL}/engines/{{engine}}/markets/{{market}}/boards/{{board}}/securities.json"
     )
 
-    INDICES_ANALYTICS = (
+    ANALYTICS = (
         f"{BASE_URL}/statistics/engines/{{engine}}/markets/{{market}}/analytics.json"
     )
-
-    CURRENT_INDICES = f"{BASE_URL}/engines/{{engine}}/markets/{{market}}/analytics.json"
 
     CANDLES = f"{BASE_URL}/engines/{{engine}}/markets/{{market}}/securities/{{secid}}/candles.json"
 
