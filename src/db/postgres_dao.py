@@ -135,3 +135,66 @@ class PostgresDAO:
         )
         # todo else commit
         self.connection.commit()
+
+    def insert_current_indices(self, current_indices):
+        data_to_insert_current_indices = []
+        for index in current_indices:
+            data_to_insert_current_indices.append(
+                (
+                    index.index_code,
+                    index.board,
+                    index.current_value,
+                    index.open_value,
+                    index.last_value,
+                    index.change_percent,
+                    index.change_points,
+                    index.high,
+                    index.low,
+                    index.volume,
+                    index.capitalization,
+                    index.update_time,
+                    index.trade_date,
+                )
+            )
+
+        query_insert_current_indices = (
+            "INSERT INTO current_indices "
+            "( "
+            " index_code, "
+            " board, "
+            " current_value, "
+            " open_value, "
+            " last_value, "
+            " change_percent, "
+            " change_points, "
+            " high, "
+            " low, "
+            " volume, "
+            " capitalization, "
+            " update_time, "
+            " trade_date "
+            ") "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+            "ON CONFLICT (index_code) DO "
+            "UPDATE SET "
+            " board = EXCLUDED.board, "
+            " current_value = EXCLUDED.current_value, "
+            " open_value = EXCLUDED.open_value, "
+            " last_value = EXCLUDED.last_value, "
+            " change_percent = EXCLUDED.change_percent, "
+            " change_points = EXCLUDED.change_points, "
+            " high = EXCLUDED.high, "
+            " low = EXCLUDED.low, "
+            " volume = EXCLUDED.volume, "
+            " capitalization = EXCLUDED.capitalization, "
+            " update_time = EXCLUDED.update_time, "
+            " trade_date = EXCLUDED.trade_date, "
+            " updated_at = NOW()"
+        )
+
+        # TODO try execute
+        self.connection.cursor().executemany(
+            query_insert_current_indices, data_to_insert_current_indices
+        )
+        # todo else commit
+        self.connection.commit()

@@ -1,6 +1,7 @@
 from src.models.moex_models.current_price import CurrentPrice
 from src.models.moex_models.index import Index
 from src.models.moex_models.instrument import Instrument
+from src.models.moex_models.current_index import CurrentIndex
 
 
 class MOEXMapper:
@@ -35,4 +36,24 @@ class MOEXMapper:
             price=float(moex_data.get("LAST")),
             volume=int(moex_data.get("VOLTODAY", 0)),
             change=moex_data.get("LASTTOPREVPRICE", ""),
+        )
+
+    def to_current_index(self, moex_data):
+        if moex_data.get("CURRENTVALUE") is None:
+            return
+
+        return CurrentIndex(
+            index_code=moex_data.get("SECID").upper(),
+            current_value=float(moex_data.get("CURRENTVALUE")),
+            board=moex_data.get("BOARDID", "SNDX"),
+            open_value=moex_data.get("OPENVALUE"),
+            last_value=moex_data.get("LASTVALUE"),
+            change_percent=moex_data.get("LASTCHANGEPRC"),
+            change_points=moex_data.get("LASTCHANGE"),
+            high=moex_data.get("HIGH"),
+            low=moex_data.get("LOW"),
+            volume=moex_data.get("VALTODAY"),
+            capitalization=moex_data.get("CAPITALIZATION"),
+            update_time=moex_data.get("UPDATETIME"),
+            trade_date=moex_data.get("TRADEDATE"),
         )

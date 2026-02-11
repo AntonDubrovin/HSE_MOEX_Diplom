@@ -52,6 +52,22 @@ def get_current_prices(moex_rest_client, postgres_dao, moex_mapper):
     print("Вставлены текущие цены в postgres")
 
 
+def get_current_indices(moex_rest_client, postgres_dao, moex_mapper):
+    current_indices = moex_rest_client.get_current_indices(
+        params={
+            "boardid": "SNDX",
+            "marketdata.columns": "SECID,BOARDID,CURRENTVALUE,OPENVALUE,LASTVALUE,LASTCHANGEPRC,LASTCHANGE,HIGH,LOW,VALTODAY,CAPITALIZATION,UPDATETIME,TRADEDATE",
+        },
+        engine="stock",
+        market="index",
+        moex_mapper=moex_mapper,
+    )
+    print(current_indices)
+
+    postgres_dao.insert_current_indices(current_indices)
+    print("Вставлены текущие индексы в postgres")
+
+
 if __name__ == "__main__":
     moex_rest_client = MOEXRestClient()
     moex_mapper = MOEXMapper()
@@ -62,6 +78,7 @@ if __name__ == "__main__":
     get_instruments(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper)
     get_indices(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper)
     get_current_prices(moex_rest_client, postgres_dao, moex_mapper)
+    get_current_indices(moex_rest_client, postgres_dao, moex_mapper)
 
     # candles_by_security = moex_rest_client.get_candles_by_security(
     #     secid="SBER",
@@ -80,14 +97,6 @@ if __name__ == "__main__":
     #     params={"date": "2026-01-14"},
     #     engine="stock",
     #     market="shares",
-    # )
-    # current_indices = moex_rest_client.get_current_indices(
-    #     params={
-    #         "boardid": "SNDX",
-    #         "marketdata.columns": "SECID,BOARDID,CURRENTVALUE,LASTCHANGEPRC,OPENVALUE,LASTVALUE,HIGH,LOW,VALTODAY,CAPITALIZATION,UPDATETIME,TRADEDATE",
-    #     },
-    #     engine="stock",
-    #     market="index",
     # )
     # index_history = moex_rest_client.get_index_history(
     #     params={

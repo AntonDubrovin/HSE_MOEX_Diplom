@@ -64,6 +64,23 @@ class MOEXRestClient:
                 current_prices.append(current_price)
         return current_prices
 
+    def get_current_indices(self, params, engine, market, moex_mapper):
+        url = MOEXUrls.CURRENT_INDICES.format(engine=engine, market=market)
+        data = self.send_request(url=url, params=params)
+
+        columns = data["marketdata"]["columns"]
+        rows = data["marketdata"]["data"]
+        print(f"columns len: {len(columns)}")
+        print(f"rows len: {len(rows)}")
+
+        current_indices = []
+        for row in rows:
+            moex_data = dict(zip(columns, row))
+            current_index = moex_mapper.to_current_index(moex_data)
+            if current_index:
+                current_indices.append(current_index)
+        return current_indices
+
     def get_statistics_analytics(self, params, engine, market):
         url = f"{self.BASE_URL}/statistics/engines/{engine}/markets/{market}/analytics.json"
         data = self.send_request(url=url, params=params)
@@ -104,17 +121,6 @@ class MOEXRestClient:
             data["history"]["data"], columns=data["history"]["columns"]
         )
         return df_info_by_security
-
-    def get_current_indices(self, params, engine, market):
-        # print("start get_current_indices")
-        url = f"{self.BASE_URL}/engines/{engine}/markets/{market}/analytics.json"
-        data = self.send_request(url=url, params=params)
-        print(data["marketdata"]["columns"])
-
-        df_current_indices = pd.DataFrame(
-            data["marketdata"]["data"], columns=data["marketdata"]["columns"]
-        )
-        return df_current_indices
 
     def get_index_history(self, params, engine, market):
         # print("start get_index_history")
