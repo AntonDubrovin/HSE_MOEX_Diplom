@@ -89,3 +89,43 @@ class ClickHouseDAO:
         # TODO optimize в else
         query_optimize_indices_ref = "OPTIMIZE TABLE moex_olap.indices_ref FINAL"
         self.client.execute(query_optimize_indices_ref)
+
+    def insert_candles(self, candles):
+        data = []
+        for c in candles:
+            data.append(
+                {
+                    "secid": c.secid,
+                    "open": c.open,
+                    "close": c.close,
+                    "high": c.high,
+                    "low": c.low,
+                    "value": c.value,
+                    "volume": c.volume,
+                    "begin": c.begin,
+                    "end": c.end,
+                    "interval": c.interval,
+                    "source": c.source,
+                }
+            )
+
+        query = (
+            "INSERT INTO moex_olap.candles "
+            "("
+            " secid, "
+            " open, "
+            " close, "
+            " high, "
+            " low, "
+            " value, "
+            " volume, "
+            " begin, "
+            " end, "
+            " interval, "
+            " source "
+            ") "
+            "VALUES "
+        )
+
+        # TODO try execute
+        self.client.execute(query, data)

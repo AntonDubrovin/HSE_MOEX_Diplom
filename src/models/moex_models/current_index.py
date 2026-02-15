@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from datetime import time, date
 
 
 class CurrentIndex(BaseModel):
@@ -16,5 +17,5 @@ class CurrentIndex(BaseModel):
     low: Optional[float] = None
     volume: Optional[float] = None
     capitalization: Optional[float] = None
-    update_time: Optional[str] = None
-    trade_date: Optional[str] = None
+    update_time: Optional[time] = None
+    trade_date: Optional[date] = None

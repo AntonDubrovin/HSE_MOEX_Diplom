@@ -89,16 +89,22 @@ class MOEXRestClient:
         df_analytics = pd.DataFrame(data["indices"]["data"], columns=data["indices"]["columns"])
         return df_analytics
 
-    def get_candles_by_security(self, secid, params, engine, market):
-        # print("start get_candles_by_security")
-        url = f"{self.BASE_URL}/engines/{engine}/markets/{market}/securities/{secid}/candles.json"
+    def get_candles_by_security(self, secid, params, engine, market, moex_mapper):
+        url = MOEXUrls.CANDLES.format(engine=engine, market=market, secid=secid)
         data = self.send_request(url=url, params=params)
-        print(data["candles"]["columns"])
 
-        df_candles_by_security = pd.DataFrame(
-            data["candles"]["data"], columns=data["candles"]["columns"]
-        )
-        return df_candles_by_security
+        columns = data["candles"]["columns"]
+        rows = data["candles"]["data"]
+        print(f"columns len: {len(columns)}")
+        print(f"rows len: {len(rows)}")
+
+        candles = []
+        for row in rows:
+            moex_data = dict(zip(columns, row))
+            candle = moex_mapper.to_candle(moex_data, secid)
+            if candle:
+                candles.append(candle)
+        return candles
 
     def get_dividends_by_security(self, secid, params):
         # print("start get_dividends_by_security")

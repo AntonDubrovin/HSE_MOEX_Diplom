@@ -5,9 +5,7 @@ class MOEXUrls:
         f"{BASE_URL}/engines/{{engine}}/markets/{{market}}/boards/{{board}}/securities.json"
     )
 
-    ANALYTICS = (
-        f"{BASE_URL}/statistics/engines/{{engine}}/markets/{{market}}/analytics.json"
-    )
+    ANALYTICS = f"{BASE_URL}/statistics/engines/{{engine}}/markets/{{market}}/analytics.json"
 
     CANDLES = f"{BASE_URL}/engines/{{engine}}/markets/{{market}}/securities/{{secid}}/candles.json"
 

@@ -2,6 +2,7 @@ from src.models.moex_models.current_price import CurrentPrice
 from src.models.moex_models.index import Index
 from src.models.moex_models.instrument import Instrument
 from src.models.moex_models.current_index import CurrentIndex
+from src.models.moex_models.candle import Candle
 
 
 class MOEXMapper:
@@ -35,7 +36,7 @@ class MOEXMapper:
             secid=moex_data.get("SECID").upper(),
             price=float(moex_data.get("LAST")),
             volume=int(moex_data.get("VOLTODAY", 0)),
-            change=moex_data.get("LASTTOPREVPRICE", ""),
+            change=moex_data.get("LASTTOPREVPRICE"),
         )
 
     def to_current_index(self, moex_data):
@@ -56,4 +57,21 @@ class MOEXMapper:
             capitalization=moex_data.get("CAPITALIZATION"),
             update_time=moex_data.get("UPDATETIME"),
             trade_date=moex_data.get("TRADEDATE"),
+        )
+
+    def to_candle(self, moex_data, secid):
+        if moex_data.get("open") is None:
+            return
+
+        return Candle(
+            secid=secid,
+            open=float(moex_data.get("open")),
+            close=float(moex_data.get("close")),
+            high=float(moex_data.get("high")),
+            low=float(moex_data.get("low")),
+            begin=moex_data.get("begin"),
+            end=moex_data.get("end"),
+            interval=moex_data.get("interval", 0),
+            value=moex_data.get("value", 0),
+            volume=moex_data.get("volume", 0),
         )

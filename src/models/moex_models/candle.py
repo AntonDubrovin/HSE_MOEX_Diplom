@@ -1,20 +1,18 @@
-from decimal import Decimal
 from pydantic import BaseModel
 from typing import Optional
-import datetime
+from datetime import datetime
 
 
 class Candle(BaseModel):
     secid: str
-    open: Decimal
-    close: Decimal
-    high: Decimal
-    low: Decimal
+    open: float
+    close: float
+    high: float
+    low: float
     begin: datetime
     end: datetime
     interval: int
 
     source: str = "MOEX"
-
-    value: Optional[Decimal] = None
-    volume: Optional[int] = None
+    value: float = 0
+    volume: int = 0
