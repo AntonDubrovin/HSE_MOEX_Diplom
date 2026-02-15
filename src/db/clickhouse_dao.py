@@ -1,4 +1,5 @@
 from clickhouse_driver import Client
+from datetime import date
 
 
 class ClickHouseDAO:
@@ -17,17 +18,13 @@ class ClickHouseDAO:
     def insert_instruments(self, instruments):
         data_to_insert_instruments = []
         for instrument in instruments:
-            isin = ""
-            if instrument.isin:
-                isin = instrument.isin
-
             data_to_insert_instruments.append(
                 {
                     "secid": instrument.secid,
                     "sec_name": instrument.sec_name,
                     "sec_type": instrument.sec_type,
                     "short_name": instrument.short_name,
-                    "isin": isin,
+                    "isin": instrument.isin,
                     "lot_size": instrument.lot_size,
                     "currency": instrument.currency,
                     "board": instrument.board,
@@ -136,13 +133,13 @@ class ClickHouseDAO:
             data.append(
                 {
                     "secid": d.secid,
-                    "isin": d.isin or "",
+                    "isin": d.isin,
                     "record_date": d.record_date,
                     "value": d.value,
-                    "currency": d.currency or "",
+                    "currency": d.currency,
                     "action_type": d.action_type,
-                    "status": d.status or "",
-                    "source_url": d.source_url or "",
+                    "status": d.status,
+                    "source_url": d.source_url,
                 }
             )
 
@@ -157,6 +154,94 @@ class ClickHouseDAO:
             " action_type, "
             " status, "
             " source_url"
+            ") "
+            "VALUES "
+        )
+
+        # TODO try execute
+        self.client.execute(query, data)
+
+    def insert_daily_aggregates(self, daily_aggregates):
+        data = []
+        for a in daily_aggregates:
+            data.append(
+                {
+                    "secid": a.secid,
+                    "trade_date": a.trade_date,
+                    "open": a.open,
+                    "high": a.high,
+                    "low": a.low,
+                    "close": a.close,
+                    "volume": a.volume,
+                    "value": a.value,
+                    "num_trades": a.num_trades,
+                    "waprice": a.waprice,
+                    "currency": a.currency,
+                }
+            )
+
+        query = (
+            "INSERT INTO moex_olap.daily_aggregates "
+            "("
+            " secid, "
+            " trade_date, "
+            " open, "
+            " high, "
+            " low, "
+            " close, "
+            " volume, "
+            " value, "
+            " num_trades, "
+            " waprice, "
+            " currency"
+            ") "
+            "VALUES "
+        )
+
+        # TODO try execute
+        self.client.execute(query, data)
+
+    def insert_index_history(self, index_history):
+        data = []
+        for h in index_history:
+            data.append(
+                {
+                    "index_code": h.index_code,
+                    "board": h.board,
+                    "trade_date": h.trade_date,
+                    "open": h.open,
+                    "high": h.high,
+                    "low": h.low,
+                    "close": h.close,
+                    "value": h.value,
+                    "volume": h.volume,
+                    "capitalization": h.capitalization,
+                    "currency": h.currency,
+                    "yield": h.yield_value,
+                    "duration": h.duration,
+                    "trading_session": h.trading_session,
+                    "recalc_date": h.recalc_date,
+                }
+            )
+
+        query = (
+            "INSERT INTO moex_olap.index_history "
+            "("
+            " index_code, "
+            " board, "
+            " trade_date, "
+            " open, "
+            " high, "
+            " low, "
+            " close, "
+            " value, "
+            " volume, "
+            " capitalization, "
+            " currency, "
+            " yield, "
+            " duration, "
+            " trading_session, "
+            " recalc_date"
             ") "
             "VALUES "
         )

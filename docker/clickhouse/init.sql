@@ -3,7 +3,7 @@ CREATE TABLE moex_olap.instruments_ref ( -- справочник инструм�
     sec_name String,
     sec_type String,
     short_name String,
-    isin String,
+    isin Nullable(String),
     lot_size UInt32,
     currency String,
     board String,
@@ -40,8 +40,8 @@ CREATE TABLE moex_olap.daily_aggregates ( -- дневные агрегаты
     volume UInt64,
     value Float64,
     num_trades UInt32,
-    waprice Float64,
-    currency String,
+    waprice Nullable(Float64),
+    currency Nullable(String),
     updated_at DateTime DEFAULT now()
 ) ENGINE = MergeTree()
 ORDER BY (trade_date, secid)
@@ -67,26 +67,26 @@ CREATE TABLE moex_olap.index_history ( -- исторические данные 
     value Float64,
     volume Float64,
     capitalization  Float64,
-    currency String,
-    yield Float64,
-    duration Float64,
-    trading_session String,
-    recalc_date Date,
+    currency Nullable(String),
+    yield Nullable(Float64),
+    duration Nullable(Float64),
+    trading_session Nullable(String),
+    recalc_date Nullable(Date),
     updated_at DateTime DEFAULT now()
 ) ENGINE = MergeTree()
 PARTITION BY toYYYYMM(trade_date)
-ORDER BY (index_code, trade_date, trading_session)
+ORDER BY (index_code, trade_date)
 TTL trade_date + INTERVAL 3 YEAR;
 
 CREATE TABLE moex_olap.corporate_actions ( -- история дивидендов/действий
     secid String,
-    isin String,
+    isin Nullable(String),
     record_date Date,
     value Float64,
-    currency String,
+    currency Nullable(String),
     action_type String,
-    status String,
-    source_url String,
+    status Nullable(String),
+    source_url Nullable(String),
     updated_at DateTime    DEFAULT now()
 ) ENGINE = MergeTree()
 ORDER BY (secid, record_date);

@@ -11,4 +11,4 @@ class MOEXUrls:
 
     DIVIDENDS = f"{BASE_URL}/securities/{{secid}}/dividends.json"
 
-    HISTORY = f"{BASE_URL}/history/engines/{{engine}}/markets/{{market}}/securities/{{secid}}.json"
+    HISTORY = f"{BASE_URL}/history/engines/{{engine}}/markets/{{market}}/boards/{{board}}/securities/{{secid}}.json"

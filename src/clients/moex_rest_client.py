@@ -15,7 +15,7 @@ class MOEXRestClient:
         print(list(data.keys()))
         return data
 
-    def get_instruments(self, params, engine, market, moex_mapper, board):
+    def get_instruments(self, params, engine, market, board, moex_mapper):
         url = MOEXUrls.SECURITIES.format(engine=engine, market=market, board=board)
         data = self.send_request(url=url, params=params)
 
@@ -31,7 +31,7 @@ class MOEXRestClient:
             instruments.append(instrument)
         return instruments
 
-    def get_indices(self, params, engine, market, moex_mapper, board):
+    def get_indices(self, params, engine, market, board, moex_mapper):
         url = MOEXUrls.SECURITIES.format(engine=engine, market=market, board=board)
         data = self.send_request(url=url, params=params)
 
@@ -47,7 +47,7 @@ class MOEXRestClient:
             indices.append(index)
         return indices
 
-    def get_current_prices(self, params, engine, market, moex_mapper, board):
+    def get_current_prices(self, params, engine, market, board, moex_mapper):
         url = MOEXUrls.SECURITIES.format(engine=engine, market=market, board=board)
         data = self.send_request(url=url, params=params)
 
@@ -64,7 +64,7 @@ class MOEXRestClient:
                 current_prices.append(current_price)
         return current_prices
 
-    def get_current_indices(self, params, engine, market, moex_mapper, board):
+    def get_current_indices(self, params, engine, market, board, moex_mapper):
         url = MOEXUrls.SECURITIES.format(engine=engine, market=market, board=board)
         data = self.send_request(url=url, params=params)
 
@@ -123,22 +123,36 @@ class MOEXRestClient:
                 dividends.append(dividend)
         return dividends
 
-    def get_info_by_security(self, secid, params, engine, market):
-        # print("start get_info_by_security")
-        url = f"{self.BASE_URL}/history/engines/{engine}/markets/{market}/securities/{secid}.json"
+    def get_daily_aggregates(self, secid, params, engine, market, board, moex_mapper):
+        url = MOEXUrls.HISTORY.format(engine=engine, market=market, board=board, secid=secid)
         data = self.send_request(url=url, params=params)
-        print(data["history"]["columns"])
 
-        df_info_by_security = pd.DataFrame(
-            data["history"]["data"], columns=data["history"]["columns"]
-        )
-        return df_info_by_security
+        columns = data["history"]["columns"]
+        rows = data["history"]["data"]
+        print(f"columns len: {len(columns)}")
+        print(f"rows len: {len(rows)}")
 
-    def get_index_history(self, params, engine, market):
-        # print("start get_index_history")
-        url = f"{self.BASE_URL}/engines/{engine}/markets/{market}/analytics.json"
+        daily_aggregates = []
+        for row in rows:
+            moex_data = dict(zip(columns, row))
+            aggregate = moex_mapper.to_daily_aggregates(moex_data)
+            if aggregate:
+                daily_aggregates.append(aggregate)
+        return daily_aggregates
+
+    def get_index_history(self, secid, params, engine, market, board, moex_mapper):
+        url = MOEXUrls.HISTORY.format(engine=engine, market=market, board=board, secid=secid)
         data = self.send_request(url=url, params=params)
-        print(data["history"]["columns"])
 
-        df_index_history = pd.DataFrame(data["history"]["data"], columns=data["history"]["columns"])
-        return df_index_history
+        columns = data["history"]["columns"]
+        rows = data["history"]["data"]
+        print(f"columns len: {len(columns)}")
+        print(f"rows len: {len(rows)}")
+
+        index_history = []
+        for row in rows:
+            moex_data = dict(zip(columns, row))
+            record = moex_mapper.to_index_history(moex_data)
+            if record:
+                index_history.append(record)
+        return index_history

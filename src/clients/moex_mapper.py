@@ -4,6 +4,8 @@ from src.models.moex_models.instrument import Instrument
 from src.models.moex_models.current_index import CurrentIndex
 from src.models.moex_models.candle import Candle
 from src.models.moex_models.dividend import Dividend
+from src.models.moex_models.daily_aggregates import DailyAggregates
+from src.models.moex_models.index_history import IndexHistory
 
 
 class MOEXMapper:
@@ -35,8 +37,8 @@ class MOEXMapper:
 
         return CurrentPrice(
             secid=moex_data.get("SECID").upper(),
-            price=float(moex_data.get("LAST")),
-            volume=int(moex_data.get("VOLTODAY", 0)),
+            price=moex_data.get("LAST"),
+            volume=moex_data.get("VOLTODAY") or 0,
             change=moex_data.get("LASTTOPREVPRICE"),
         )
 
@@ -46,7 +48,7 @@ class MOEXMapper:
 
         return CurrentIndex(
             index_code=moex_data.get("SECID").upper(),
-            current_value=float(moex_data.get("CURRENTVALUE")),
+            current_value=moex_data.get("CURRENTVALUE"),
             board=moex_data.get("BOARDID", "SNDX"),
             open_value=moex_data.get("OPENVALUE"),
             last_value=moex_data.get("LASTVALUE"),
@@ -66,15 +68,15 @@ class MOEXMapper:
 
         return Candle(
             secid=secid,
-            open=float(moex_data.get("open")),
-            close=float(moex_data.get("close")),
-            high=float(moex_data.get("high")),
-            low=float(moex_data.get("low")),
+            open=moex_data.get("open"),
+            close=moex_data.get("close"),
+            high=moex_data.get("high"),
+            low=moex_data.get("low"),
             begin=moex_data.get("begin"),
             end=moex_data.get("end"),
             interval=moex_data.get("interval", 0),
-            value=moex_data.get("value", 0),
-            volume=moex_data.get("volume", 0),
+            value=moex_data.get("value") or 0,
+            volume=moex_data.get("volume") or 0,
         )
 
     def to_dividend(self, moex_data):
@@ -84,7 +86,47 @@ class MOEXMapper:
         return Dividend(
             secid=moex_data.get("secid").upper(),
             record_date=moex_data.get("registryclosedate"),
-            value=float(moex_data.get("value")),
+            value=moex_data.get("value"),
             isin=moex_data.get("isin"),
             currency=moex_data.get("currencyid"),
+        )
+
+    def to_daily_aggregates(self, moex_data):
+        if moex_data.get("OPEN") is None:
+            return
+
+        return DailyAggregates(
+            secid=moex_data.get("SECID").upper(),
+            trade_date=moex_data.get("TRADEDATE"),
+            open=moex_data.get("OPEN"),
+            high=moex_data.get("HIGH"),
+            low=moex_data.get("LOW"),
+            close=moex_data.get("CLOSE"),
+            volume=moex_data.get("VOLUME") or 0,
+            value=moex_data.get("VALUE") or 0,
+            num_trades=moex_data.get("NUMTRADES") or 0,
+            waprice=moex_data.get("WAPRICE"),
+            currency=moex_data.get("CURRENCYID"),
+        )
+
+    def to_index_history(self, moex_data):
+        if moex_data.get("OPEN") is None:
+            return
+
+        return IndexHistory(
+            index_code=moex_data.get("SECID").upper(),
+            trade_date=moex_data.get("TRADEDATE"),
+            open=moex_data.get("OPEN"),
+            high=moex_data.get("HIGH"),
+            low=moex_data.get("LOW"),
+            close=moex_data.get("CLOSE"),
+            board=moex_data.get("BOARDID", "SNDX"),
+            value=moex_data.get("VALUE") or 0,
+            volume=moex_data.get("VOLUME") or 0,
+            capitalization=moex_data.get("CAPITALIZATION") or 0,
+            currency=moex_data.get("CURRENCYID"),
+            yield_value=moex_data.get("YIELD"),
+            duration=moex_data.get("DURATION"),
+            trading_session=moex_data.get("TRADINGSESSION"),
+            recalc_date=moex_data.get("RECALC_DATE"),
         )

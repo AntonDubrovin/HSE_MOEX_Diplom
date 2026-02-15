@@ -6,15 +6,15 @@ from src.clients.moex_rest_client import MOEXRestClient
 
 
 def get_instruments(
-    moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper, board, engine, market
+    moex_rest_client, postgres_dao, clickhouse_dao, engine, market, board, moex_mapper
 ):
     instruments = moex_rest_client.get_instruments(
         params={
             "securities.columns": "SECID,SECNAME,SHORTNAME,ISIN,SECTYPE,LOTSIZE,CURRENCYID,BOARDID"
         },
-        board=board,
         engine=engine,
         market=market,
+        board=board,
         moex_mapper=moex_mapper,
     )
     print(instruments)
@@ -26,7 +26,7 @@ def get_instruments(
     print("Вставлены инструменты в clickhouse")
 
 
-def get_indices(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper, board, engine, market):
+def get_indices(moex_rest_client, postgres_dao, clickhouse_dao, engine, market, board, moex_mapper):
     indices = moex_rest_client.get_indices(
         params={"securities.columns": "SECID,SHORTNAME"},
         board=board,
@@ -43,7 +43,7 @@ def get_indices(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper, boa
     print("Вставлены индексы в clickhouse")
 
 
-def get_current_prices(moex_rest_client, postgres_dao, moex_mapper, board, engine, market):
+def get_current_prices(moex_rest_client, postgres_dao, engine, market, board, moex_mapper):
     current_prices = moex_rest_client.get_current_prices(
         params={"marketdata.columns": "SECID,LAST,VOLTODAY,LASTTOPREVPRICE"},
         board=board,
@@ -57,7 +57,7 @@ def get_current_prices(moex_rest_client, postgres_dao, moex_mapper, board, engin
     print("Вставлены текущие цены в postgres")
 
 
-def get_current_indices(moex_rest_client, postgres_dao, moex_mapper, board, engine, market):
+def get_current_indices(moex_rest_client, postgres_dao, engine, market, board, moex_mapper):
     current_indices = moex_rest_client.get_current_indices(
         params={
             "marketdata.columns": "SECID,BOARDID,CURRENTVALUE,OPENVALUE,LASTVALUE,LASTCHANGEPRC,LASTCHANGE,HIGH,LOW,VALTODAY,CAPITALIZATION,UPDATETIME,TRADEDATE",
@@ -74,7 +74,7 @@ def get_current_indices(moex_rest_client, postgres_dao, moex_mapper, board, engi
 
 
 def get_candles(
-    moex_rest_client, clickhouse_dao, moex_mapper, from_, till_, interval_, secid, engine, market
+    moex_rest_client, clickhouse_dao, from_, till_, interval_, secid, engine, market, moex_mapper
 ):
     candles = moex_rest_client.get_candles_by_security(
         params={"from": from_, "till": till_, "interval": interval_},
@@ -89,7 +89,7 @@ def get_candles(
     print("Вставлены свечи в clickhouse")
 
 
-def get_dividends(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper, secid):
+def get_dividends(moex_rest_client, postgres_dao, clickhouse_dao, secid, moex_mapper):
     dividends = moex_rest_client.get_dividends_by_security(
         params={},
         secid=secid,
@@ -104,6 +104,40 @@ def get_dividends(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper, s
     print("Вставлены дивиденды в clickhouse")
 
 
+def get_daily_aggregates(
+    moex_rest_client, clickhouse_dao, from_, till_, secid, engine, market, board, moex_mapper
+):
+    daily_aggregates = moex_rest_client.get_daily_aggregates(
+        params={"from": from_, "till": till_},
+        secid=secid,
+        board=board,
+        engine=engine,
+        market=market,
+        moex_mapper=moex_mapper,
+    )
+    print(daily_aggregates)
+
+    clickhouse_dao.insert_daily_aggregates(daily_aggregates)
+    print("Вставлены дневные агрегаты в clickhouse")
+
+
+def get_index_history(
+    moex_rest_client, clickhouse_dao, from_, till_, secid, engine, market, board, moex_mapper
+):
+    index_history = moex_rest_client.get_index_history(
+        params={"from": from_, "till": till_},
+        secid=secid,
+        board=board,
+        engine=engine,
+        market=market,
+        moex_mapper=moex_mapper,
+    )
+    print(index_history)
+
+    clickhouse_dao.insert_index_history(index_history)
+    print("Вставлена история индексов в clickhouse")
+
+
 if __name__ == "__main__":
     moex_rest_client = MOEXRestClient()
     moex_mapper = MOEXMapper()
@@ -115,56 +149,80 @@ if __name__ == "__main__":
         moex_rest_client=moex_rest_client,
         postgres_dao=postgres_dao,
         clickhouse_dao=clickhouse_dao,
-        moex_mapper=moex_mapper,
-        board="TQBR",
         engine="stock",
         market="shares",
+        board="TQBR",
+        moex_mapper=moex_mapper,
     )
 
     get_indices(
         moex_rest_client=moex_rest_client,
         postgres_dao=postgres_dao,
         clickhouse_dao=clickhouse_dao,
-        moex_mapper=moex_mapper,
-        board="SNDX",
         engine="stock",
         market="index",
+        board="SNDX",
+        moex_mapper=moex_mapper,
     )
 
     get_current_prices(
         moex_rest_client=moex_rest_client,
         postgres_dao=postgres_dao,
-        moex_mapper=moex_mapper,
         engine="stock",
         market="shares",
         board="TQBR",
+        moex_mapper=moex_mapper,
     )
 
     get_current_indices(
         moex_rest_client=moex_rest_client,
         postgres_dao=postgres_dao,
-        moex_mapper=moex_mapper,
-        board="SNDX",
         engine="stock",
         market="index",
+        board="SNDX",
+        moex_mapper=moex_mapper,
     )
 
     get_candles(
         moex_rest_client=moex_rest_client,
         clickhouse_dao=clickhouse_dao,
-        moex_mapper=moex_mapper,
         from_="2026-02-01",
         till_="2026-02-15",
         interval_=24,
         secid="SBER",
         engine="stock",
         market="shares",
+        moex_mapper=moex_mapper,
     )
 
     get_dividends(
         moex_rest_client=moex_rest_client,
         postgres_dao=postgres_dao,
         clickhouse_dao=clickhouse_dao,
-        moex_mapper=moex_mapper,
         secid="SBER",
+        moex_mapper=moex_mapper,
+    )
+
+    get_daily_aggregates(
+        moex_rest_client=moex_rest_client,
+        clickhouse_dao=clickhouse_dao,
+        from_="2026-02-01",
+        till_="2026-02-15",
+        secid="SBER",
+        engine="stock",
+        market="shares",
+        board="TQBR",
+        moex_mapper=moex_mapper,
+    )
+
+    get_index_history(
+        moex_rest_client=moex_rest_client,
+        clickhouse_dao=clickhouse_dao,
+        from_="2026-02-01",
+        till_="2026-02-15",
+        secid="IMOEX",
+        engine="stock",
+        market="index",
+        board="SNDX",
+        moex_mapper=moex_mapper,
     )
