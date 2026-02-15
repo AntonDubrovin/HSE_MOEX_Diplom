@@ -129,3 +129,37 @@ class ClickHouseDAO:
 
         # TODO try execute
         self.client.execute(query, data)
+
+    def insert_corporate_actions(self, dividends):
+        data = []
+        for d in dividends:
+            data.append(
+                {
+                    "secid": d.secid,
+                    "isin": d.isin or "",
+                    "record_date": d.record_date,
+                    "value": d.value,
+                    "currency": d.currency or "",
+                    "action_type": d.action_type,
+                    "status": d.status or "",
+                    "source_url": d.source_url or "",
+                }
+            )
+
+        query = (
+            "INSERT INTO moex_olap.corporate_actions "
+            "("
+            " secid, "
+            " isin, "
+            " record_date, "
+            " value, "
+            " currency, "
+            " action_type, "
+            " status, "
+            " source_url"
+            ") "
+            "VALUES "
+        )
+
+        # TODO try execute
+        self.client.execute(query, data)

@@ -198,3 +198,48 @@ class PostgresDAO:
         )
         # todo else commit
         self.connection.commit()
+
+    def insert_corporate_actions(self, dividends):
+        data = []
+        for d in dividends:
+            data.append(
+                (
+                    d.secid,
+                    d.isin,
+                    d.record_date,
+                    d.value,
+                    d.currency,
+                    d.action_type,
+                    d.status,
+                    d.source_url,
+                )
+            )
+
+        query = (
+            "INSERT INTO corporate_actions "
+            "("
+            " secid, "
+            " isin, "
+            " record_date, "
+            " value, "
+            " currency, "
+            " action_type, "
+            " status, "
+            " source_url "
+            ") "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
+            "ON CONFLICT (secid, record_date) DO "
+            "UPDATE SET "
+            " isin = EXCLUDED.isin, "
+            " value = EXCLUDED.value, "
+            " currency = EXCLUDED.currency, "
+            " action_type = EXCLUDED.action_type, "
+            " status = EXCLUDED.status, "
+            " source_url = EXCLUDED.source_url, "
+            " updated_at = NOW()"
+        )
+
+        # TODO try execute
+        self.connection.cursor().executemany(query, data)
+        # todo else commit
+        self.connection.commit()

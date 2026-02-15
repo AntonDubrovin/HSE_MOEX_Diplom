@@ -89,6 +89,21 @@ def get_candles(
     print("Вставлены свечи в clickhouse")
 
 
+def get_dividends(moex_rest_client, postgres_dao, clickhouse_dao, moex_mapper, secid):
+    dividends = moex_rest_client.get_dividends_by_security(
+        params={},
+        secid=secid,
+        moex_mapper=moex_mapper,
+    )
+    print(dividends)
+
+    postgres_dao.insert_corporate_actions(dividends)
+    print("Вставлены дивиденды в postgres")
+
+    clickhouse_dao.insert_corporate_actions(dividends)
+    print("Вставлены дивиденды в clickhouse")
+
+
 if __name__ == "__main__":
     moex_rest_client = MOEXRestClient()
     moex_mapper = MOEXMapper()
@@ -105,6 +120,7 @@ if __name__ == "__main__":
         engine="stock",
         market="shares",
     )
+
     get_indices(
         moex_rest_client=moex_rest_client,
         postgres_dao=postgres_dao,
@@ -114,6 +130,7 @@ if __name__ == "__main__":
         engine="stock",
         market="index",
     )
+
     get_current_prices(
         moex_rest_client=moex_rest_client,
         postgres_dao=postgres_dao,
@@ -122,6 +139,7 @@ if __name__ == "__main__":
         market="shares",
         board="TQBR",
     )
+
     get_current_indices(
         moex_rest_client=moex_rest_client,
         postgres_dao=postgres_dao,
@@ -130,6 +148,7 @@ if __name__ == "__main__":
         engine="stock",
         market="index",
     )
+
     get_candles(
         moex_rest_client=moex_rest_client,
         clickhouse_dao=clickhouse_dao,
@@ -142,26 +161,10 @@ if __name__ == "__main__":
         market="shares",
     )
 
-    # indices_metadata = moex_rest_client.get_indices_metadata(
-    #     params={"boardid": "SNDX"},
-    #     engine="stock",
-    #     market="index",
-    # )
-    # corporate_actions_by_security = moex_rest_client.get_dividends_by_security(secid="SBER", params={})
-    # daily_aggregates_by_security = moex_rest_client.get_info_by_security(
-    #     secid="SBER",
-    #     params={"date": "2026-01-14"},
-    #     engine="stock",
-    #     market="shares",
-    # )
-    # index_history = moex_rest_client.get_index_history(
-    #     params={
-    #         "boardid": "SNDX",
-    #         "secid": "IMOEX",
-    #         "from": "2026-01-01",
-    #         "till": "2026-01-31",
-    #         "history.columns": "TRADEDATE,SECID,BOARDID,OPEN,HIGH,LOW,CLOSE,VALUE,CAPITALIZATION,CURRENCYID,TRADINGSESSION,RECALC_DATE",
-    #     },
-    #     engine="stock",
-    #     market="index",
-    # )
+    get_dividends(
+        moex_rest_client=moex_rest_client,
+        postgres_dao=postgres_dao,
+        clickhouse_dao=clickhouse_dao,
+        moex_mapper=moex_mapper,
+        secid="SBER",
+    )

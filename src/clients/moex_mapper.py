@@ -3,6 +3,7 @@ from src.models.moex_models.index import Index
 from src.models.moex_models.instrument import Instrument
 from src.models.moex_models.current_index import CurrentIndex
 from src.models.moex_models.candle import Candle
+from src.models.moex_models.dividend import Dividend
 
 
 class MOEXMapper:
@@ -74,4 +75,16 @@ class MOEXMapper:
             interval=moex_data.get("interval", 0),
             value=moex_data.get("value", 0),
             volume=moex_data.get("volume", 0),
+        )
+
+    def to_dividend(self, moex_data):
+        if moex_data.get("value") is None:
+            return
+
+        return Dividend(
+            secid=moex_data.get("secid").upper(),
+            record_date=moex_data.get("registryclosedate"),
+            value=float(moex_data.get("value")),
+            isin=moex_data.get("isin"),
+            currency=moex_data.get("currencyid"),
         )

@@ -106,16 +106,22 @@ class MOEXRestClient:
                 candles.append(candle)
         return candles
 
-    def get_dividends_by_security(self, secid, params):
-        # print("start get_dividends_by_security")
-        url = f"{self.BASE_URL}/securities/{secid}/dividends.json"
+    def get_dividends_by_security(self, secid, params, moex_mapper):
+        url = MOEXUrls.DIVIDENDS.format(secid=secid)
         data = self.send_request(url=url, params=params)
-        print(data["dividends"]["columns"])
 
-        df_dividends_by_security = pd.DataFrame(
-            data["dividends"]["data"], columns=data["dividends"]["columns"]
-        )
-        return df_dividends_by_security
+        columns = data["dividends"]["columns"]
+        rows = data["dividends"]["data"]
+        print(f"columns len: {len(columns)}")
+        print(f"rows len: {len(rows)}")
+
+        dividends = []
+        for row in rows:
+            moex_data = dict(zip(columns, row))
+            dividend = moex_mapper.to_dividend(moex_data)
+            if dividend:
+                dividends.append(dividend)
+        return dividends
 
     def get_info_by_security(self, secid, params, engine, market):
         # print("start get_info_by_security")
