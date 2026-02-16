@@ -8,7 +8,7 @@ from src.models.moex_models.daily_aggregates import DailyAggregates
 from src.models.moex_models.index_history import IndexHistory
 
 
-class MOEXMapper:
+class MOEXAPIMapper:
     def to_instrument(self, moex_data, engine, market):
         return Instrument(
             secid=moex_data.get("SECID").upper(),

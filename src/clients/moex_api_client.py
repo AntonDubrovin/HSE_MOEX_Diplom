@@ -3,7 +3,7 @@ import pandas as pd
 from src.clients.moex_urls import MOEXUrls
 
 
-class MOEXRestClient:
+class MOEXApiClient:
     BASE_URL = "https://iss.moex.com/iss"
 
     def send_request(self, url, params):

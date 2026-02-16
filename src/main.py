@@ -1,8 +1,11 @@
 from config.settings import Settings
-from src.clients.moex_mapper import MOEXMapper
+from src.clients.moex_api_mapper import MOEXAPIMapper
 from src.db.clickhouse_dao import ClickHouseDAO
 from src.db.postgres_dao import PostgresDAO
-from src.clients.moex_rest_client import MOEXRestClient
+from src.clients.moex_api_client import MOEXApiClient
+import asyncio
+from src.clients.moex_ws_client import moex_websocket, get_securities
+from src.clients.moex_ws_mapper import MOEXWebSocketMapper
 
 
 def get_instruments(
@@ -138,12 +141,9 @@ def get_index_history(
     print("Вставлена история индексов в clickhouse")
 
 
-if __name__ == "__main__":
-    moex_rest_client = MOEXRestClient()
-    moex_mapper = MOEXMapper()
-    settings = Settings()
-    postgres_dao = PostgresDAO(settings)
-    clickhouse_dao = ClickHouseDAO(settings)
+def go_to_api_methods(postgres_dao, clickhouse_dao):
+    moex_rest_client = MOEXApiClient()
+    moex_mapper = MOEXAPIMapper()
 
     get_instruments(
         moex_rest_client=moex_rest_client,
@@ -226,3 +226,37 @@ if __name__ == "__main__":
         board="SNDX",
         moex_mapper=moex_mapper,
     )
+
+
+def go_to_websocket(postgres_dao):
+    moex_ws_mapper = MOEXWebSocketMapper()
+
+    WS_URL = "ws://iss.moex.com/infocx/v3/websocket"
+    WS_CREDENTIALS = {
+        "domain": "DEMO",
+        "login": "guest",
+        "passcode": "guest",
+    }
+    destination = "MXSE.securities"
+    selector = 'TICKER="MXSE.TQBR.SBER"'
+
+    asyncio.run(
+        moex_websocket(
+            url=WS_URL,
+            credentials=WS_CREDENTIALS,
+            destination=destination,
+            selector=selector,
+            handler=get_securities,
+            moex_ws_mapper=moex_ws_mapper,
+            postgres_dao=postgres_dao,
+        )
+    )
+
+
+if __name__ == "__main__":
+    settings = Settings()
+    postgres_dao = PostgresDAO(settings)
+    clickhouse_dao = ClickHouseDAO(settings)
+
+    # go_to_api_methods(postgres_dao, clickhouse_dao)
+    go_to_websocket(postgres_dao)
