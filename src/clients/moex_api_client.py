@@ -1,5 +1,6 @@
-import requests
 import pandas as pd
+import requests
+
 from src.clients.moex_urls import MOEXUrls
 
 

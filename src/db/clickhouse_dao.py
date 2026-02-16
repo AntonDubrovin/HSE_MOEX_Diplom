@@ -1,5 +1,6 @@
-from clickhouse_driver import Client
 from datetime import date
+
+from clickhouse_driver import Client
 
 
 class ClickHouseDAO:

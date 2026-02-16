@@ -1,11 +1,11 @@
-from src.models.moex_models.current_price import CurrentPrice
-from src.models.moex_models.index import Index
-from src.models.moex_models.instrument import Instrument
-from src.models.moex_models.current_index import CurrentIndex
 from src.models.moex_models.candle import Candle
-from src.models.moex_models.dividend import Dividend
+from src.models.moex_models.current_index import CurrentIndex
+from src.models.moex_models.current_price import CurrentPrice
 from src.models.moex_models.daily_aggregates import DailyAggregates
+from src.models.moex_models.dividend import Dividend
+from src.models.moex_models.index import Index
 from src.models.moex_models.index_history import IndexHistory
+from src.models.moex_models.instrument import Instrument
 
 
 class MOEXAPIMapper:

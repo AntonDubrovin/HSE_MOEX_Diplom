@@ -2,8 +2,8 @@ import asyncio
 import json
 import uuid
 
-from websockets import connect, ConnectionClosed
 from stomp.utils import Frame, convert_frame, parse_frame
+from websockets import ConnectionClosed, connect
 
 
 async def send_frame(websocket, cmd, headers):

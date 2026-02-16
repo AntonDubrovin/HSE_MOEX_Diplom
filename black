@@ -1,1 +1,2 @@
 black src -l 100
+isort src

@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from datetime import date, time
 from typing import Optional
-from datetime import time, date
+
+from pydantic import BaseModel
 
 
 class CurrentIndex(BaseModel):

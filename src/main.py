@@ -1,11 +1,12 @@
+import asyncio
+
 from config.settings import Settings
+from src.clients.moex_api_client import MOEXApiClient
 from src.clients.moex_api_mapper import MOEXAPIMapper
+from src.clients.moex_ws_client import get_securities, moex_websocket
+from src.clients.moex_ws_mapper import MOEXWebSocketMapper
 from src.db.clickhouse_dao import ClickHouseDAO
 from src.db.postgres_dao import PostgresDAO
-from src.clients.moex_api_client import MOEXApiClient
-import asyncio
-from src.clients.moex_ws_client import moex_websocket, get_securities
-from src.clients.moex_ws_mapper import MOEXWebSocketMapper
 
 
 def get_instruments(
