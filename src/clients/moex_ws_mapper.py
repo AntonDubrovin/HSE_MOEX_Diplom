@@ -17,4 +17,5 @@ class MOEXWebSocketMapper:
             price=last,
             volume=self.extract_float(ws_data.get("VOLTODAY")) or 0,
             change=self.extract_float(ws_data.get("CHANGE")),
+            trading_status=ws_data.get("TRADINGSTATUS"),
         )

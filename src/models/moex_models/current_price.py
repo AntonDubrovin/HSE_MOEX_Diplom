@@ -10,3 +10,4 @@ class CurrentPrice(BaseModel):
     volume: int = 0
 
     change: Optional[float] = None
+    trading_status: Optional[str] = None

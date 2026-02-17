@@ -71,6 +71,7 @@ def get_securities(body, moex_ws_mapper, postgres_dao):
 
     for row in rows:
         ws_data = dict(zip(columns, row))
+        print(ws_data)
         current_price = moex_ws_mapper.to_current_price(ws_data)
         if current_price:
             postgres_dao.insert_current_prices([current_price])

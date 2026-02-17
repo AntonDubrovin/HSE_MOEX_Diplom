@@ -109,6 +109,7 @@ class PostgresDAO:
                     price.price,
                     price.volume,
                     price.change,
+                    price.trading_status,
                 )
             )
 
@@ -118,14 +119,16 @@ class PostgresDAO:
             " secid, "
             " price, "
             " volume, "
-            " change "
+            " change, "
+            " trading_status "
             ") "
-            "VALUES (%s, %s, %s, %s) "
+            "VALUES (%s, %s, %s, %s, %s) "
             "ON CONFLICT (secid) DO "
             "UPDATE SET "
             " price = EXCLUDED.price, "
             " volume = EXCLUDED.volume, "
             " change = EXCLUDED.change, "
+            " trading_status = COALESCE(EXCLUDED.trading_status, current_prices.trading_status), "
             " updated_at = NOW()"
         )
 

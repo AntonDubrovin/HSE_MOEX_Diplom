@@ -54,6 +54,7 @@ CREATE TABLE current_prices ( -- текущие цены
     price NUMERIC(18,6),
     volume BIGINT,
     change NUMERIC(10,4),
+    trading_status VARCHAR(5),
     updated_at TIMESTAMP DEFAULT NOW(),
 
     CONSTRAINT fk_current_prices_secid FOREIGN KEY (secid) REFERENCES instruments(secid)
@@ -85,14 +86,6 @@ CREATE TABLE current_indices ( -- текущие значения индексо
     updated_at TIMESTAMP DEFAULT NOW(),
 
     CONSTRAINT fk_current_indices_code FOREIGN KEY (index_code) REFERENCES indices(index_code)
-);
-
-CREATE TABLE market_status ( -- статус торгов
-    market VARCHAR(50) PRIMARY KEY,
-    status VARCHAR(20),
-    open_time TIME,
-    close_time TIME,
-    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE corporate_actions ( -- корпоративные действия
