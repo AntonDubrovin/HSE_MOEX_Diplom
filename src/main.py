@@ -259,5 +259,5 @@ if __name__ == "__main__":
     postgres_dao = PostgresDAO(settings)
     clickhouse_dao = ClickHouseDAO(settings)
 
-    # go_to_api_methods(postgres_dao, clickhouse_dao)
+    go_to_api_methods(postgres_dao, clickhouse_dao)
     go_to_websocket(postgres_dao)
