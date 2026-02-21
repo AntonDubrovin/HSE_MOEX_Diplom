@@ -15,9 +15,9 @@ class PostgresDAO:
         self.connection.close()
 
     def insert_instruments(self, instruments):
-        data_to_insert_instruments = []
+        data_insert_instruments = []
         for instrument in instruments:
-            data_to_insert_instruments.append(
+            data_insert_instruments.append(
                 (
                     instrument.secid,
                     instrument.sec_name,
@@ -32,7 +32,7 @@ class PostgresDAO:
                 )
             )
 
-        query_insert_instrument_ref = (
+        query_insert_instruments = (
             "INSERT INTO instruments "
             "( "
             " secid, "
@@ -60,16 +60,14 @@ class PostgresDAO:
         )
 
         # TODO try execute
-        self.connection.cursor().executemany(
-            query_insert_instrument_ref, data_to_insert_instruments
-        )
+        self.connection.cursor().executemany(query_insert_instruments, data_insert_instruments)
         # todo else commit
         self.connection.commit()
 
     def insert_indices(self, indices):
-        data_to_insert_indices = []
+        data_insert_indices = []
         for index in indices:
-            data_to_insert_indices.append(
+            data_insert_indices.append(
                 (
                     index.index_code,
                     index.index_name,
@@ -96,14 +94,14 @@ class PostgresDAO:
         )
 
         # TODO try execute
-        self.connection.cursor().executemany(query_insert_indices, data_to_insert_indices)
+        self.connection.cursor().executemany(query_insert_indices, data_insert_indices)
         # todo else commit
         self.connection.commit()
 
     def insert_current_prices(self, current_prices):
-        data_to_insert_current_prices = []
+        data_insert_current_prices = []
         for price in current_prices:
-            data_to_insert_current_prices.append(
+            data_insert_current_prices.append(
                 (
                     price.secid,
                     price.price,
@@ -113,7 +111,7 @@ class PostgresDAO:
                 )
             )
 
-        query_insert_current_prices = (
+        query_insert_insert_current_prices = (
             "INSERT INTO current_prices "
             "( "
             " secid, "
@@ -133,16 +131,14 @@ class PostgresDAO:
         )
 
         # TODO try execute
-        self.connection.cursor().executemany(
-            query_insert_current_prices, data_to_insert_current_prices
-        )
+        self.connection.cursor().executemany(query_insert_insert_current_prices, data_insert_current_prices)
         # todo else commit
         self.connection.commit()
 
     def insert_current_indices(self, current_indices):
-        data_to_insert_current_indices = []
+        data_insert_current_indices = []
         for index in current_indices:
-            data_to_insert_current_indices.append(
+            data_insert_current_indices.append(
                 (
                     index.index_code,
                     index.board,
@@ -196,16 +192,14 @@ class PostgresDAO:
         )
 
         # TODO try execute
-        self.connection.cursor().executemany(
-            query_insert_current_indices, data_to_insert_current_indices
-        )
+        self.connection.cursor().executemany(query_insert_current_indices, data_insert_current_indices)
         # todo else commit
         self.connection.commit()
 
     def insert_corporate_actions(self, dividends):
-        data = []
+        data_insert_corporate_actions = []
         for d in dividends:
-            data.append(
+            data_insert_corporate_actions.append(
                 (
                     d.secid,
                     d.isin,
@@ -218,7 +212,7 @@ class PostgresDAO:
                 )
             )
 
-        query = (
+        query_insert_corporate_actions = (
             "INSERT INTO corporate_actions "
             "("
             " secid, "
@@ -243,6 +237,6 @@ class PostgresDAO:
         )
 
         # TODO try execute
-        self.connection.cursor().executemany(query, data)
+        self.connection.cursor().executemany(query_insert_corporate_actions, data_insert_corporate_actions)
         # todo else commit
         self.connection.commit()

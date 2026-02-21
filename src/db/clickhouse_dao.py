@@ -17,9 +17,9 @@ class ClickHouseDAO:
         self.client.disconnect()
 
     def insert_instruments(self, instruments):
-        data_to_insert_instruments = []
+        data_insert_instruments = []
         for instrument in instruments:
-            data_to_insert_instruments.append(
+            data_insert_instruments.append(
                 {
                     "secid": instrument.secid,
                     "sec_name": instrument.sec_name,
@@ -34,7 +34,7 @@ class ClickHouseDAO:
                 }
             )
 
-        query_insert_instruments = (
+        query_insert_instruments_ref = (
             "INSERT INTO moex_olap.instruments_ref "
             "("
             " secid, "
@@ -52,16 +52,17 @@ class ClickHouseDAO:
         )
 
         # TODO try execute
-        self.client.execute(query_insert_instruments, data_to_insert_instruments)
+        self.client.execute(query_insert_instruments_ref, data_insert_instruments)
 
         # TODO optimize в else
+        # делаем optimize, тк наша таблица - справочник, и дублей не должно быть
         query_optimize_instruments_ref = "OPTIMIZE TABLE moex_olap.instruments_ref FINAL"
         self.client.execute(query_optimize_instruments_ref)
 
     def insert_indices(self, indices):
-        data_to_insert_indices = []
+        data_insert_indices = []
         for index in indices:
-            data_to_insert_indices.append(
+            data_insert_indices.append(
                 {
                     "index_code": index.index_code,
                     "index_name": index.index_name,
@@ -82,16 +83,17 @@ class ClickHouseDAO:
         )
 
         # TODO try execute
-        self.client.execute(query_insert_indices, data_to_insert_indices)
+        self.client.execute(query_insert_indices, data_insert_indices)
 
         # TODO optimize в else
+        # делаем optimize, тк наша таблица - справочник, и дублей не должно быть
         query_optimize_indices_ref = "OPTIMIZE TABLE moex_olap.indices_ref FINAL"
         self.client.execute(query_optimize_indices_ref)
 
     def insert_candles(self, candles):
-        data = []
+        data_insert_candles = []
         for c in candles:
-            data.append(
+            data_insert_candles.append(
                 {
                     "secid": c.secid,
                     "open": c.open,
@@ -107,7 +109,7 @@ class ClickHouseDAO:
                 }
             )
 
-        query = (
+        query_insert_candles = (
             "INSERT INTO moex_olap.candles "
             "("
             " secid, "
@@ -126,12 +128,12 @@ class ClickHouseDAO:
         )
 
         # TODO try execute
-        self.client.execute(query, data)
+        self.client.execute(query_insert_candles, data_insert_candles)
 
     def insert_corporate_actions(self, dividends):
-        data = []
+        data_insert_corporate_actions = []
         for d in dividends:
-            data.append(
+            data_insert_corporate_actions.append(
                 {
                     "secid": d.secid,
                     "isin": d.isin,
@@ -144,7 +146,7 @@ class ClickHouseDAO:
                 }
             )
 
-        query = (
+        query_insert_corporate_actions = (
             "INSERT INTO moex_olap.corporate_actions "
             "("
             " secid, "
@@ -160,12 +162,12 @@ class ClickHouseDAO:
         )
 
         # TODO try execute
-        self.client.execute(query, data)
+        self.client.execute(query_insert_corporate_actions, data_insert_corporate_actions)
 
     def insert_daily_aggregates(self, daily_aggregates):
-        data = []
+        data_insert_daily_aggregates = []
         for a in daily_aggregates:
-            data.append(
+            data_insert_daily_aggregates.append(
                 {
                     "secid": a.secid,
                     "trade_date": a.trade_date,
@@ -181,7 +183,7 @@ class ClickHouseDAO:
                 }
             )
 
-        query = (
+        query_insert_daily_aggregates = (
             "INSERT INTO moex_olap.daily_aggregates "
             "("
             " secid, "
@@ -200,12 +202,12 @@ class ClickHouseDAO:
         )
 
         # TODO try execute
-        self.client.execute(query, data)
+        self.client.execute(query_insert_daily_aggregates, data_insert_daily_aggregates)
 
     def insert_index_history(self, index_history):
-        data = []
+        data_insert_index_history = []
         for h in index_history:
-            data.append(
+            data_insert_index_history.append(
                 {
                     "index_code": h.index_code,
                     "board": h.board,
@@ -225,7 +227,7 @@ class ClickHouseDAO:
                 }
             )
 
-        query = (
+        query_insert_index_history = (
             "INSERT INTO moex_olap.index_history "
             "("
             " index_code, "
@@ -248,4 +250,4 @@ class ClickHouseDAO:
         )
 
         # TODO try execute
-        self.client.execute(query, data)
+        self.client.execute(query_insert_index_history, data_insert_index_history)

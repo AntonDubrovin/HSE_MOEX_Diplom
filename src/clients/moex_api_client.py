@@ -5,8 +5,6 @@ from src.clients.moex_urls import MOEXUrls
 
 
 class MOEXApiClient:
-    BASE_URL = "https://iss.moex.com/iss"
-
     def send_request(self, url, params):
         # print("-------------")
         print(f"sending {url}")
@@ -22,8 +20,8 @@ class MOEXApiClient:
 
         columns = data["securities"]["columns"]
         rows = data["securities"]["data"]
-        print(f"columns len: {len(columns)}")
-        print(f"rows len: {len(rows)}")
+        # print(f"columns len: {len(columns)}")
+        # print(f"rows len: {len(rows)}")
 
         instruments = []
         for row in rows:
@@ -38,8 +36,8 @@ class MOEXApiClient:
 
         columns = data["securities"]["columns"]
         rows = data["securities"]["data"]
-        print(f"columns len: {len(columns)}")
-        print(f"rows len: {len(rows)}")
+        # print(f"columns len: {len(columns)}")
+        # print(f"rows len: {len(rows)}")
 
         indices = []
         for row in rows:
@@ -96,8 +94,8 @@ class MOEXApiClient:
 
         columns = data["candles"]["columns"]
         rows = data["candles"]["data"]
-        print(f"columns len: {len(columns)}")
-        print(f"rows len: {len(rows)}")
+        # print(f"columns len: {len(columns)}")
+        # print(f"rows len: {len(rows)}")
 
         candles = []
         for row in rows:
@@ -113,8 +111,8 @@ class MOEXApiClient:
 
         columns = data["dividends"]["columns"]
         rows = data["dividends"]["data"]
-        print(f"columns len: {len(columns)}")
-        print(f"rows len: {len(rows)}")
+        # print(f"columns len: {len(columns)}")
+        # print(f"rows len: {len(rows)}")
 
         dividends = []
         for row in rows:
@@ -130,8 +128,8 @@ class MOEXApiClient:
 
         columns = data["history"]["columns"]
         rows = data["history"]["data"]
-        print(f"columns len: {len(columns)}")
-        print(f"rows len: {len(rows)}")
+        # print(f"columns len: {len(columns)}")
+        # print(f"rows len: {len(rows)}")
 
         daily_aggregates = []
         for row in rows:
@@ -147,8 +145,8 @@ class MOEXApiClient:
 
         columns = data["history"]["columns"]
         rows = data["history"]["data"]
-        print(f"columns len: {len(columns)}")
-        print(f"rows len: {len(rows)}")
+        # print(f"columns len: {len(columns)}")
+        # print(f"rows len: {len(rows)}")
 
         index_history = []
         for row in rows:
