@@ -13,16 +13,16 @@ from src.db.clickhouse_dao import ClickHouseDAO
     schedule="@daily",
     params={
         "engine": "stock",
-        "market": "index",
-        "board": "SNDX",
-        "secid": "IMOEX",
+        "market": "shares",
+        "board": "TQBR",
+        "secid": "SBER",
         "from": "2026-01-01",
         "till": "2026-01-01",
     },
 )
-def get_index_history_dag():
+def get_daily_aggregates_dag():
     @task()
-    def get_index_history_task(**kwargs):
+    def get_daily_aggregates_task(**kwargs):
         settings = Settings()
         clickhouse_dao = ClickHouseDAO(settings)
         moex_rest_client = MOEXApiClient()
@@ -36,7 +36,7 @@ def get_index_history_dag():
         from_ = params["from"]
         till_ = params["till"]
 
-        index_history = moex_rest_client.get_index_history(
+        daily_aggregates = moex_rest_client.get_daily_aggregates(
             params={"from": from_, "till": till_},
             secid=secid,
             board=board,
@@ -44,13 +44,13 @@ def get_index_history_dag():
             market=market,
             moex_mapper=moex_mapper,
         )
-        print(index_history)
-        print(len(index_history))
+        print(len(daily_aggregates))
+        print(daily_aggregates)
 
-        clickhouse_dao.insert_index_history(index_history)
-        print("Вставлена история индексов в clickhouse")
+        clickhouse_dao.insert_daily_aggregates(daily_aggregates)
+        print("Вставлены дневные агрегаты в clickhouse")
 
-    get_index_history_task()
+    get_daily_aggregates_task()
 
 
-get_index_history_dag()
+get_daily_aggregates_dag()

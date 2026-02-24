@@ -188,8 +188,8 @@ def go_to_api_methods(postgres_dao, clickhouse_dao):
     # get_candles(
     #     moex_rest_client=moex_rest_client,
     #     clickhouse_dao=clickhouse_dao,
-    #     from_="2026-02-01",
-    #     till_="2026-02-15",
+    #     from_="2020-02-24",
+    #     till_="2026-02-24",
     #     interval_=24,
     #     secid="SBER",
     #     engine="stock",
@@ -205,29 +205,29 @@ def go_to_api_methods(postgres_dao, clickhouse_dao):
     #     moex_mapper=moex_mapper,
     # )
     #
-    # get_daily_aggregates(
-    #     moex_rest_client=moex_rest_client,
-    #     clickhouse_dao=clickhouse_dao,
-    #     from_="2026-02-01",
-    #     till_="2026-02-15",
-    #     secid="SBER",
-    #     engine="stock",
-    #     market="shares",
-    #     board="TQBR",
-    #     moex_mapper=moex_mapper,
-    # )
-
-    get_index_history(
+    get_daily_aggregates(
         moex_rest_client=moex_rest_client,
         clickhouse_dao=clickhouse_dao,
-        from_="2025-01-01",
-        till_="2026-02-24",
-        secid="IMOEX",
+        from_="2024-02-01",
+        till_="2026-02-15",
+        secid="SBER",
         engine="stock",
-        market="index",
-        board="SNDX",
+        market="shares",
+        board="TQBR",
         moex_mapper=moex_mapper,
     )
+
+    # get_index_history(
+    #     moex_rest_client=moex_rest_client,
+    #     clickhouse_dao=clickhouse_dao,
+    #     from_="2025-01-01",
+    #     till_="2026-02-24",
+    #     secid="IMOEX",
+    #     engine="stock",
+    #     market="index",
+    #     board="SNDX",
+    #     moex_mapper=moex_mapper,
+    # )
 
 
 def go_to_websocket(postgres_dao):
