@@ -141,15 +141,47 @@ class MOEXApiClient:
 
     def get_index_history(self, secid, params, engine, market, board, moex_mapper):
         url = MOEXUrls.HISTORY.format(engine=engine, market=market, board=board, secid=secid)
-        data = self.send_request(url=url, params=params)
+        data_moex_url = self.send_request(url=url, params=params)
 
-        columns = data["history"]["columns"]
-        rows = data["history"]["data"]
+        columns = data_moex_url["history"]["columns"]
+        data_all = data_moex_url["history"]["data"]
+        history_cursor_columns = data_moex_url["history.cursor"]["columns"]
+        history_cursor_data = data_moex_url["history.cursor"]["data"][0]
+
         # print(f"columns len: {len(columns)}")
         # print(f"rows len: {len(rows)}")
+        print(history_cursor_columns)
+        print(history_cursor_data)
+
+        moex_history_cursors = dict(zip(history_cursor_columns, history_cursor_data))
+
+        pagesize = moex_history_cursors.get("PAGESIZE")
+        total = moex_history_cursors.get("TOTAL")
+        index = moex_history_cursors.get("INDEX")
+
+        while index + pagesize < total:
+            url = MOEXUrls.HISTORY.format(engine=engine, market=market, board=board, secid=secid)
+            params["start"] = index + pagesize
+            data_moex_url = self.send_request(url=url, params=params)
+
+            history_cursor_columns = data_moex_url["history.cursor"]["columns"]
+            history_cursor_data = data_moex_url["history.cursor"]["data"][0]
+
+            print(history_cursor_columns)
+            print(history_cursor_data)
+
+            moex_history_cursors = dict(zip(history_cursor_columns, history_cursor_data))
+
+            pagesize = moex_history_cursors.get("PAGESIZE")
+            total = moex_history_cursors.get("TOTAL")
+            index = moex_history_cursors.get("INDEX")
+
+            data = data_moex_url["history"]["data"]
+            print(f"rows len: {len(data)}")
+            data_all.extend(data)
 
         index_history = []
-        for row in rows:
+        for row in data_all:
             moex_data = dict(zip(columns, row))
             record = moex_mapper.to_index_history(moex_data)
             if record:

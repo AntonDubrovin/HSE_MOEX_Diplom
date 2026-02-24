@@ -130,6 +130,11 @@ class ClickHouseDAO:
         # TODO try execute
         self.client.execute(query_insert_candles, data_insert_candles)
 
+        # TODO optimize в else
+        # делаем optimize, тк можем запросить данные за одинаковые промежутки 2+ раз, тогда будут дубли
+        query_optimize_candles_ref = "OPTIMIZE TABLE moex_olap.candles FINAL"
+        self.client.execute(query_optimize_candles_ref)
+
     def insert_corporate_actions(self, dividends):
         data_insert_corporate_actions = []
         for d in dividends:
@@ -163,6 +168,11 @@ class ClickHouseDAO:
 
         # TODO try execute
         self.client.execute(query_insert_corporate_actions, data_insert_corporate_actions)
+
+        # TODO optimize в else
+        # делаем optimize, тк можем выполнить 2+ раз и будут дубли
+        query_optimize_corporate_actions_ref = "OPTIMIZE TABLE moex_olap.corporate_actions FINAL"
+        self.client.execute(query_optimize_corporate_actions_ref)
 
     def insert_daily_aggregates(self, daily_aggregates):
         data_insert_daily_aggregates = []
@@ -203,6 +213,11 @@ class ClickHouseDAO:
 
         # TODO try execute
         self.client.execute(query_insert_daily_aggregates, data_insert_daily_aggregates)
+
+        # TODO optimize в else
+        # делаем optimize, тк можем выполнить 2+ раз и будут дубли
+        query_optimize_daily_aggregates_ref = "OPTIMIZE TABLE moex_olap.daily_aggregates FINAL"
+        self.client.execute(query_optimize_daily_aggregates_ref)
 
     def insert_index_history(self, index_history):
         data_insert_index_history = []
@@ -251,3 +266,8 @@ class ClickHouseDAO:
 
         # TODO try execute
         self.client.execute(query_insert_index_history, data_insert_index_history)
+
+        # TODO optimize в else
+        # делаем optimize, тк можем выполнить 2+ раз и будут дубли
+        query_optimize_index_history = "OPTIMIZE TABLE moex_olap.index_history FINAL"
+        self.client.execute(query_optimize_index_history)

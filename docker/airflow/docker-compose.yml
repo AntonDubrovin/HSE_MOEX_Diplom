@@ -5,14 +5,17 @@ x-airflow-common: &airflow-common
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    PYTHONPATH: /opt/airflow
     _PIP_ADDITIONAL_REQUIREMENTS: psycopg2-binary==2.9.11 clickhouse-driver==0.2.10 requests==2.32.5 pydantic==2.12.5 python-dotenv==1.2.1 stomp.py==8.2.0 websockets==16.0
+    POSTGRES_HOST: host.docker.internal
+    CLICKHOUSE_HOST: host.docker.internal
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
-    - ./config:/opt/airflow/config
     - ../../src:/opt/airflow/src
-    - ../../config:/opt/airflow/app_config
+    - ../../config:/opt/airflow/config
+    - ../../.env:/opt/airflow/.env
 
 services:
   airflow-postgres:

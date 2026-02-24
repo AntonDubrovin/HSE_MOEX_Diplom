@@ -1,2 +1,4 @@
 black src -l 100
+black docker/airflow/dags -l 100
 isort src
+isort docker/airflow/dags

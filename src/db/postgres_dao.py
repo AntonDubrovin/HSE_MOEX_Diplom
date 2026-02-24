@@ -131,7 +131,9 @@ class PostgresDAO:
         )
 
         # TODO try execute
-        self.connection.cursor().executemany(query_insert_insert_current_prices, data_insert_current_prices)
+        self.connection.cursor().executemany(
+            query_insert_insert_current_prices, data_insert_current_prices
+        )
         # todo else commit
         self.connection.commit()
 
@@ -192,7 +194,9 @@ class PostgresDAO:
         )
 
         # TODO try execute
-        self.connection.cursor().executemany(query_insert_current_indices, data_insert_current_indices)
+        self.connection.cursor().executemany(
+            query_insert_current_indices, data_insert_current_indices
+        )
         # todo else commit
         self.connection.commit()
 
@@ -237,6 +241,8 @@ class PostgresDAO:
         )
 
         # TODO try execute
-        self.connection.cursor().executemany(query_insert_corporate_actions, data_insert_corporate_actions)
+        self.connection.cursor().executemany(
+            query_insert_corporate_actions, data_insert_corporate_actions
+        )
         # todo else commit
         self.connection.commit()

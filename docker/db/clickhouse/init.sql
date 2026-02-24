@@ -24,8 +24,9 @@ CREATE TABLE moex_olap.candles ( -- исторические свечи
     begin DateTime('Europe/Moscow'),
     end DateTime('Europe/Moscow'),
     interval UInt16,
-    source String DEFAULT 'MOEX'
-) ENGINE = MergeTree()
+    source String DEFAULT 'MOEX',
+    updated_at DateTime DEFAULT now()
+) ENGINE = ReplacingMergeTree(updated_at)
 PARTITION BY toYYYYMM(begin)
 ORDER BY (secid, begin, interval)
 TTL begin + INTERVAL 3 YEAR;
@@ -43,7 +44,7 @@ CREATE TABLE moex_olap.daily_aggregates ( -- дневные агрегаты
     waprice Nullable(Float64),
     currency Nullable(String),
     updated_at DateTime DEFAULT now()
-) ENGINE = MergeTree()
+) ENGINE = ReplacingMergeTree(updated_at)
 ORDER BY (trade_date, secid)
 PARTITION BY toYYYYMM(trade_date);
 
@@ -53,7 +54,7 @@ CREATE TABLE moex_olap.indices_ref ( -- справочник индексов
     engine String,
     market String,
     updated_at DateTime DEFAULT now()
-) ENGINE = MergeTree()
+) ENGINE = ReplacingMergeTree(updated_at)
 ORDER BY index_code;
 
 CREATE TABLE moex_olap.index_history ( -- исторические данные индексов
@@ -73,7 +74,7 @@ CREATE TABLE moex_olap.index_history ( -- исторические данные 
     trading_session Nullable(String),
     recalc_date Nullable(Date),
     updated_at DateTime DEFAULT now()
-) ENGINE = MergeTree()
+) ENGINE = ReplacingMergeTree(updated_at)
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (index_code, trade_date)
 TTL trade_date + INTERVAL 3 YEAR;
@@ -88,7 +89,7 @@ CREATE TABLE moex_olap.corporate_actions ( -- история дивидендо�
     status Nullable(String),
     source_url Nullable(String),
     updated_at DateTime    DEFAULT now()
-) ENGINE = MergeTree()
+) ENGINE = ReplacingMergeTree(updated_at)
 ORDER BY (secid, record_date);
 
 CREATE TABLE IF NOT EXISTS moex_olap.sec_types ( -- справочник типов ценных бумаг
