@@ -29,7 +29,6 @@ CREATE TABLE moex_olap.candles ( -- исторические свечи
 ) ENGINE = ReplacingMergeTree(updated_at)
 PARTITION BY toYYYYMM(begin)
 ORDER BY (secid, begin, interval)
-TTL begin + INTERVAL 3 YEAR;
 
 CREATE TABLE moex_olap.daily_aggregates ( -- дневные агрегаты
     secid String,
@@ -77,7 +76,6 @@ CREATE TABLE moex_olap.index_history ( -- исторические данные 
 ) ENGINE = ReplacingMergeTree(updated_at)
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (index_code, trade_date)
-TTL trade_date + INTERVAL 3 YEAR;
 
 CREATE TABLE moex_olap.corporate_actions ( -- история дивидендов/действий
     secid String,

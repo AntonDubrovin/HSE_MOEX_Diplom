@@ -90,15 +90,24 @@ class MOEXApiClient:
 
     def get_candles_by_security(self, secid, params, engine, market, moex_mapper):
         url = MOEXUrls.CANDLES.format(engine=engine, market=market, secid=secid)
-        data = self.send_request(url=url, params=params)
+        data_moex_url = self.send_request(url=url, params=params)
 
-        columns = data["candles"]["columns"]
-        rows = data["candles"]["data"]
+        columns = data_moex_url["candles"]["columns"]
+        data_all = data_moex_url["candles"]["data"]
         print(f"columns len: {len(columns)}")
-        print(f"rows len: {len(rows)}")
+        print(f"rows len: {len(data_all)}")
+
+        while True:
+            params["start"] = len(data_all)
+            data_moex_url = self.send_request(url=url, params=params)
+            data = data_moex_url["candles"]["data"]
+            if not data:
+                break
+            data_all.extend(data)
+            print(f"rows len: {len(data)}")
 
         candles = []
-        for row in rows:
+        for row in data_all:
             moex_data = dict(zip(columns, row))
             candle = moex_mapper.to_candle(moex_data, secid)
             if candle:

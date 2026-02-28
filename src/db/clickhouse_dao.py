@@ -128,7 +128,11 @@ class ClickHouseDAO:
         )
 
         # TODO try execute
-        self.client.execute(query_insert_candles, data_insert_candles)
+        self.client.execute(
+            query_insert_candles,
+            data_insert_candles,
+            settings={"max_partitions_per_insert_block": 0},
+        )
 
         # TODO optimize в else
         # делаем optimize, тк можем запросить данные за одинаковые промежутки 2+ раз, тогда будут дубли
@@ -212,7 +216,11 @@ class ClickHouseDAO:
         )
 
         # TODO try execute
-        self.client.execute(query_insert_daily_aggregates, data_insert_daily_aggregates)
+        self.client.execute(
+            query_insert_daily_aggregates,
+            data_insert_daily_aggregates,
+            settings={"max_partitions_per_insert_block": 0},
+        )
 
         # TODO optimize в else
         # делаем optimize, тк можем выполнить 2+ раз и будут дубли
@@ -265,7 +273,11 @@ class ClickHouseDAO:
         )
 
         # TODO try execute
-        self.client.execute(query_insert_index_history, data_insert_index_history)
+        self.client.execute(
+            query_insert_index_history,
+            data_insert_index_history,
+            settings={"max_partitions_per_insert_block": 0},
+        )
 
         # TODO optimize в else
         # делаем optimize, тк можем выполнить 2+ раз и будут дубли
