@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class CurrentIndex(BaseModel):
-    index_code: str
+    secid: str
     current_value: float
 
     board: str = "SNDX"

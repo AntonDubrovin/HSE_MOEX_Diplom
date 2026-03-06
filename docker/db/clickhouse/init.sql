@@ -28,7 +28,7 @@ CREATE TABLE moex_olap.candles ( -- исторические свечи
     updated_at DateTime DEFAULT now()
 ) ENGINE = ReplacingMergeTree(updated_at)
 PARTITION BY toYYYYMM(begin)
-ORDER BY (secid, begin, interval)
+ORDER BY (secid, begin, interval);
 
 CREATE TABLE moex_olap.daily_aggregates ( -- дневные агрегаты
     secid String,
@@ -48,16 +48,16 @@ ORDER BY (trade_date, secid)
 PARTITION BY toYYYYMM(trade_date);
 
 CREATE TABLE moex_olap.indices_ref ( -- справочник индексов
-    index_code String,
+    secid String,
     index_name String,
     engine String,
     market String,
     updated_at DateTime DEFAULT now()
 ) ENGINE = ReplacingMergeTree(updated_at)
-ORDER BY index_code;
+ORDER BY secid;
 
 CREATE TABLE moex_olap.index_history ( -- исторические данные индексов
-    index_code String,
+    secid String,
     board String,
     trade_date Date,
     open Float64,
@@ -75,7 +75,7 @@ CREATE TABLE moex_olap.index_history ( -- исторические данные 
     updated_at DateTime DEFAULT now()
 ) ENGINE = ReplacingMergeTree(updated_at)
 PARTITION BY toYYYYMM(trade_date)
-ORDER BY (index_code, trade_date)
+ORDER BY (secid, trade_date);
 
 CREATE TABLE moex_olap.corporate_actions ( -- история дивидендов/действий
     secid String,

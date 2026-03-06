@@ -25,7 +25,7 @@ class MOEXAPIMapper:
 
     def to_index(self, moex_data, engine, market):
         return Index(
-            index_code=moex_data.get("SECID").upper(),
+            secid=moex_data.get("SECID").upper(),
             index_name=moex_data.get("SHORTNAME"),
             engine=engine,
             market=market,
@@ -47,7 +47,7 @@ class MOEXAPIMapper:
             return
 
         return CurrentIndex(
-            index_code=moex_data.get("SECID").upper(),
+            secid=moex_data.get("SECID").upper(),
             current_value=moex_data.get("CURRENTVALUE"),
             board=moex_data.get("BOARDID", "SNDX"),
             open_value=moex_data.get("OPENVALUE"),
@@ -114,7 +114,7 @@ class MOEXAPIMapper:
             return
 
         return IndexHistory(
-            index_code=moex_data.get("SECID").upper(),
+            secid=moex_data.get("SECID").upper(),
             trade_date=moex_data.get("TRADEDATE"),
             open=moex_data.get("OPEN"),
             high=moex_data.get("HIGH"),

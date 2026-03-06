@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class Index(BaseModel):
-    index_code: str
+    secid: str
     index_name: str
 
     engine: str = "stock"

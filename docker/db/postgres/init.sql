@@ -61,7 +61,7 @@ CREATE TABLE current_prices ( -- текущие цены
 );
 
 CREATE TABLE indices ( -- справочник индексов
-    index_code VARCHAR(20) PRIMARY KEY,
+    secid VARCHAR(20) PRIMARY KEY,
     index_name VARCHAR(100),
     engine VARCHAR(20),
     market VARCHAR(20),
@@ -70,7 +70,7 @@ CREATE TABLE indices ( -- справочник индексов
 );
 
 CREATE TABLE current_indices ( -- текущие значения индексов
-    index_code VARCHAR(20) PRIMARY KEY,
+    secid VARCHAR(20) PRIMARY KEY,
     board VARCHAR(10),
     current_value NUMERIC(18,4),
     open_value NUMERIC(18,4),
@@ -85,7 +85,7 @@ CREATE TABLE current_indices ( -- текущие значения индексо
     trade_date DATE,
     updated_at TIMESTAMP DEFAULT NOW(),
 
-    CONSTRAINT fk_current_indices_code FOREIGN KEY (index_code) REFERENCES indices(index_code)
+    CONSTRAINT fk_current_indices_code FOREIGN KEY (secid) REFERENCES indices(secid)
 );
 
 CREATE TABLE corporate_actions ( -- корпоративные действия

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class IndexHistory(BaseModel):
-    index_code: str
+    secid: str
     trade_date: date
     open: float
     high: float

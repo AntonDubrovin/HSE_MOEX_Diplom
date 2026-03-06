@@ -59,9 +59,7 @@ class PostgresDAO:
             " updated_at = NOW()"
         )
 
-        # TODO try execute
         self.connection.cursor().executemany(query_insert_instruments, data_insert_instruments)
-        # todo else commit
         self.connection.commit()
 
     def insert_indices(self, indices):
@@ -69,7 +67,7 @@ class PostgresDAO:
         for index in indices:
             data_insert_indices.append(
                 (
-                    index.index_code,
+                    index.secid,
                     index.index_name,
                     index.engine,
                     index.market,
@@ -79,13 +77,13 @@ class PostgresDAO:
         query_insert_indices = (
             "INSERT INTO indices "
             "( "
-            " index_code, "
+            " secid, "
             " index_name, "
             " engine, "
             " market "
             ") "
             "VALUES (%s, %s, %s, %s) "
-            "ON CONFLICT (index_code) DO "
+            "ON CONFLICT (secid) DO "
             "UPDATE SET "
             " index_name = EXCLUDED.index_name, "
             " engine = EXCLUDED.engine, "
@@ -93,9 +91,7 @@ class PostgresDAO:
             " updated_at = NOW()"
         )
 
-        # TODO try execute
         self.connection.cursor().executemany(query_insert_indices, data_insert_indices)
-        # todo else commit
         self.connection.commit()
 
     def insert_current_prices(self, current_prices):
@@ -130,11 +126,9 @@ class PostgresDAO:
             " updated_at = NOW()"
         )
 
-        # TODO try execute
         self.connection.cursor().executemany(
             query_insert_insert_current_prices, data_insert_current_prices
         )
-        # todo else commit
         self.connection.commit()
 
     def insert_current_indices(self, current_indices):
@@ -142,7 +136,7 @@ class PostgresDAO:
         for index in current_indices:
             data_insert_current_indices.append(
                 (
-                    index.index_code,
+                    index.secid,
                     index.board,
                     index.current_value,
                     index.open_value,
@@ -161,7 +155,7 @@ class PostgresDAO:
         query_insert_current_indices = (
             "INSERT INTO current_indices "
             "( "
-            " index_code, "
+            " secid, "
             " board, "
             " current_value, "
             " open_value, "
@@ -176,7 +170,7 @@ class PostgresDAO:
             " trade_date "
             ") "
             "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
-            "ON CONFLICT (index_code) DO "
+            "ON CONFLICT (secid) DO "
             "UPDATE SET "
             " board = EXCLUDED.board, "
             " current_value = EXCLUDED.current_value, "
@@ -193,11 +187,9 @@ class PostgresDAO:
             " updated_at = NOW()"
         )
 
-        # TODO try execute
         self.connection.cursor().executemany(
             query_insert_current_indices, data_insert_current_indices
         )
-        # todo else commit
         self.connection.commit()
 
     def insert_corporate_actions(self, dividends):
@@ -240,9 +232,7 @@ class PostgresDAO:
             " updated_at = NOW()"
         )
 
-        # TODO try execute
         self.connection.cursor().executemany(
             query_insert_corporate_actions, data_insert_corporate_actions
         )
-        # todo else commit
         self.connection.commit()

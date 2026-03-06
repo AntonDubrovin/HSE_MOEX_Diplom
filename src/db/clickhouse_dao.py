@@ -51,10 +51,8 @@ class ClickHouseDAO:
             "VALUES "
         )
 
-        # TODO try execute
         self.client.execute(query_insert_instruments_ref, data_insert_instruments)
 
-        # TODO optimize в else
         # делаем optimize, тк наша таблица - справочник, и дублей не должно быть
         query_optimize_instruments_ref = "OPTIMIZE TABLE moex_olap.instruments_ref FINAL"
         self.client.execute(query_optimize_instruments_ref)
@@ -64,7 +62,7 @@ class ClickHouseDAO:
         for index in indices:
             data_insert_indices.append(
                 {
-                    "index_code": index.index_code,
+                    "secid": index.secid,
                     "index_name": index.index_name,
                     "engine": index.engine,
                     "market": index.market,
@@ -74,7 +72,7 @@ class ClickHouseDAO:
         query_insert_indices = (
             "INSERT INTO moex_olap.indices_ref "
             "("
-            " index_code, "
+            " secid, "
             " index_name, "
             " engine, "
             " market "
@@ -82,10 +80,8 @@ class ClickHouseDAO:
             "VALUES "
         )
 
-        # TODO try execute
         self.client.execute(query_insert_indices, data_insert_indices)
 
-        # TODO optimize в else
         # делаем optimize, тк наша таблица - справочник, и дублей не должно быть
         query_optimize_indices_ref = "OPTIMIZE TABLE moex_olap.indices_ref FINAL"
         self.client.execute(query_optimize_indices_ref)
@@ -127,14 +123,12 @@ class ClickHouseDAO:
             "VALUES "
         )
 
-        # TODO try execute
         self.client.execute(
             query_insert_candles,
             data_insert_candles,
             settings={"max_partitions_per_insert_block": 0},
         )
 
-        # TODO optimize в else
         # делаем optimize, тк можем запросить данные за одинаковые промежутки 2+ раз, тогда будут дубли
         query_optimize_candles_ref = "OPTIMIZE TABLE moex_olap.candles FINAL"
         self.client.execute(query_optimize_candles_ref)
@@ -170,10 +164,8 @@ class ClickHouseDAO:
             "VALUES "
         )
 
-        # TODO try execute
         self.client.execute(query_insert_corporate_actions, data_insert_corporate_actions)
 
-        # TODO optimize в else
         # делаем optimize, тк можем выполнить 2+ раз и будут дубли
         query_optimize_corporate_actions_ref = "OPTIMIZE TABLE moex_olap.corporate_actions FINAL"
         self.client.execute(query_optimize_corporate_actions_ref)
@@ -215,14 +207,12 @@ class ClickHouseDAO:
             "VALUES "
         )
 
-        # TODO try execute
         self.client.execute(
             query_insert_daily_aggregates,
             data_insert_daily_aggregates,
             settings={"max_partitions_per_insert_block": 0},
         )
 
-        # TODO optimize в else
         # делаем optimize, тк можем выполнить 2+ раз и будут дубли
         query_optimize_daily_aggregates_ref = "OPTIMIZE TABLE moex_olap.daily_aggregates FINAL"
         self.client.execute(query_optimize_daily_aggregates_ref)
@@ -232,7 +222,7 @@ class ClickHouseDAO:
         for h in index_history:
             data_insert_index_history.append(
                 {
-                    "index_code": h.index_code,
+                    "secid": h.secid,
                     "board": h.board,
                     "trade_date": h.trade_date,
                     "open": h.open,
@@ -253,7 +243,7 @@ class ClickHouseDAO:
         query_insert_index_history = (
             "INSERT INTO moex_olap.index_history "
             "("
-            " index_code, "
+            " secid, "
             " board, "
             " trade_date, "
             " open, "
@@ -272,14 +262,12 @@ class ClickHouseDAO:
             "VALUES "
         )
 
-        # TODO try execute
         self.client.execute(
             query_insert_index_history,
             data_insert_index_history,
             settings={"max_partitions_per_insert_block": 0},
         )
 
-        # TODO optimize в else
         # делаем optimize, тк можем выполнить 2+ раз и будут дубли
         query_optimize_index_history = "OPTIMIZE TABLE moex_olap.index_history FINAL"
         self.client.execute(query_optimize_index_history)
