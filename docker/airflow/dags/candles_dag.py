@@ -88,9 +88,10 @@ def get_candles_dag():
         from_ = params["from"]
         till_ = params["till"]
 
+        table = "candles"
         try:
             clickhouse_data_checker.check_data_exists_by_secid_dates(
-                table="candles",
+                table=table,
                 secid=secid,
                 from_=from_,
                 till_=till_,
@@ -101,7 +102,19 @@ def get_candles_dag():
             logger.error(e)
             raise Exception(e)
         else:
-            logger.info(f"Проверка на наличе данных свечей по secid={secid} успешно завершена")
+            logger.info(
+                f"Проверка на наличе данных свечей в clickhouse по secid={secid} успешно завершена"
+            )
+
+        try:
+            clickhouse_data_checker.check_data_duplicates(
+                table=table, groupby_columns=["secid", "begin", "interval"]
+            )
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на дубли данных свечей в clickhouse успешно завершена")
 
     candles = get_candles_by_security_from_moex()
     len_candles = insert_candles_clickhouse(candles)

@@ -92,9 +92,10 @@ def get_index_history_dag():
         from_ = params["from"]
         till_ = params["till"]
 
+        table = "index_history"
         try:
             clickhouse_data_checker.check_data_exists_by_secid_dates(
-                table="index_history",
+                table=table,
                 secid=secid,
                 from_=from_,
                 till_=till_,
@@ -108,6 +109,16 @@ def get_index_history_dag():
             logger.info(
                 f"Проверка на наличе данных истории индексов по secid={secid} успешно завершена"
             )
+
+        try:
+            clickhouse_data_checker.check_data_duplicates(
+                table=table, groupby_columns=["secid", "trade_date"]
+            )
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на дубли данных истории индексов в clickhouse успешно завершена")
 
     index_history = get_index_history_by_security_from_moex()
     len_index_history = insert_index_history_clickhouse(index_history)

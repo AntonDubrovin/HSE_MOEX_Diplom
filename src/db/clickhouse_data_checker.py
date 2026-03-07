@@ -55,3 +55,19 @@ class ClickHouseDataChecker:
                 f"Несовпадение количества данных. "
                 f"Из API получено {data_length} записей, в БД {db_length} записей"
             )
+
+    def check_data_duplicates(self, table, groupby_columns):
+        query_check_data_duplicates = f"""
+            SELECT
+                {", ".join(groupby_columns)}, COUNT(*)
+            FROM
+                moex_olap.{table} FINAL
+            GROUP BY
+                {", ".join(groupby_columns)}
+            HAVING
+                COUNT(*) > 1
+        """
+        res = self.clickhouse_dao.client.execute(query_check_data_duplicates)
+
+        if res:
+            raise Exception(f"Найдены дубли в таблице {table} | {res}")

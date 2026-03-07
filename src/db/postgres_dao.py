@@ -14,6 +14,11 @@ class PostgresDAO:
     def close(self):
         self.connection.close()
 
+    def execute(self, query):
+        cursor = self.connection.cursor()
+        cursor.execute(query)
+        return cursor.fetchall()
+
     def insert_instruments(self, instruments):
         data_insert_instruments = []
         for instrument in instruments:

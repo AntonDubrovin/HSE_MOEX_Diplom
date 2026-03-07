@@ -8,6 +8,7 @@ from src.clients.moex_api_client import MOEXApiClient
 from src.clients.moex_api_mapper import MOEXAPIMapper
 from src.db.clickhouse_dao import ClickHouseDAO
 from src.db.clickhouse_data_checker import ClickHouseDataChecker
+from src.db.posgtres_data_checker import PostgresDataChecker
 from src.db.postgres_dao import PostgresDAO
 from src.models.moex_models.index import Index
 
@@ -89,18 +90,53 @@ def get_index_dag():
         clickhouse_dao = ClickHouseDAO(settings)
         clickhouse_data_checker = ClickHouseDataChecker(clickhouse_dao)
 
+        table = "indices_ref"
         try:
-            clickhouse_data_checker.check_data_exists(table="indices_ref", data_length=len_indices)
+            clickhouse_data_checker.check_data_exists(table=table, data_length=len_indices)
         except Exception as e:
             logger.error(e)
             raise Exception(e)
         else:
             logger.info(f"Проверка на наличе данных индексов в ClickHouse успешно завершена")
 
+        try:
+            clickhouse_data_checker.check_data_duplicates(table=table, groupby_columns=["secid"])
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на дубли данных индексов в clickhouse успешно завершена")
+
+    @task()
+    def check_data_index_postgres(len_indices):
+        settings = Settings()
+        postgres_dao = PostgresDAO(settings)
+        postgres_data_checker = PostgresDataChecker(postgres_dao)
+
+        table = "indices"
+        try:
+            postgres_data_checker.check_data_exists(table=table, data_length=len_indices)
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на наличе данных индексов в PostgreSQL успешно завершена")
+
+        try:
+            postgres_data_checker.check_data_duplicates(table=table, groupby_columns=["secid"])
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на дубли данных индексов в postgres успешно завершена")
+
     indicies = get_index_by_security_from_moex()
+
     len_indicies_clickhouse = insert_index_clickhouse(indicies)
-    len_indicies_postgres = insert_index_postgres(indicies)
     check_data_index_clickhouse(len_indicies_clickhouse)
+
+    len_indicies_postgres = insert_index_postgres(indicies)
+    check_data_index_postgres(len_indicies_postgres)
 
 
 logger = logging.getLogger(__name__)

@@ -94,9 +94,10 @@ def get_daily_aggregates_dag():
         from_ = params["from"]
         till_ = params["till"]
 
+        table = "daily_aggregates"
         try:
             clickhouse_data_checker.check_data_exists_by_secid_dates(
-                table="daily_aggregates",
+                table=table,
                 secid=secid,
                 from_=from_,
                 till_=till_,
@@ -108,7 +109,19 @@ def get_daily_aggregates_dag():
             raise Exception(e)
         else:
             logger.info(
-                f"Проверка на наличе данных дневных агрегатов по secid={secid} успешно завершена"
+                f"Проверка на наличе данных дневных агрегатов в clickhouse по secid={secid} успешно завершена"
+            )
+
+        try:
+            clickhouse_data_checker.check_data_duplicates(
+                table=table, groupby_columns=["secid", "trade_date"]
+            )
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(
+                f"Проверка на дубли данных дневных агрегатов в clickhouse успешно завершена"
             )
 
     daily_aggregates = get_daily_aggregates_from_moex()

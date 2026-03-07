@@ -8,6 +8,7 @@ from src.clients.moex_api_client import MOEXApiClient
 from src.clients.moex_api_mapper import MOEXAPIMapper
 from src.db.clickhouse_dao import ClickHouseDAO
 from src.db.clickhouse_data_checker import ClickHouseDataChecker
+from src.db.posgtres_data_checker import PostgresDataChecker
 from src.db.postgres_dao import PostgresDAO
 from src.models.moex_models.dividend import Dividend
 
@@ -100,20 +101,68 @@ def get_dividends_dag():
         params = kwargs["params"]
         secid = params["secid"]
 
+        table = "corporate_actions"
         try:
             clickhouse_data_checker.check_data_exists_by_secid(
-                table="corporate_actions", secid=secid, data_length=len_dividends
+                table=table, secid=secid, data_length=len_dividends
             )
         except Exception as e:
             logger.error(e)
             raise Exception(e)
         else:
-            logger.info(f"Проверка на наличе данных дивидендов по secid={secid} успешно завершена")
+            logger.info(
+                f"Проверка на наличе данных дивидендов в clickhouse по secid={secid} успешно завершена"
+            )
+
+        try:
+            clickhouse_data_checker.check_data_duplicates(
+                table=table, groupby_columns=["secid", "record_date"]
+            )
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на дубли данных дивидендов в clickhouse успешно завершена")
+
+    @task()
+    def check_data_dividends_postgres(len_dividends, **kwargs):
+        settings = Settings()
+        postgres_dao = PostgresDAO(settings)
+        postgres_data_checker = PostgresDataChecker(postgres_dao)
+
+        params = kwargs["params"]
+        secid = params["secid"]
+
+        table = "corporate_actions"
+        try:
+            postgres_data_checker.check_data_exists_by_secid(
+                table=table, secid=secid, data_length=len_dividends
+            )
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(
+                f"Проверка на наличе данных дивидендов в postgres по secid={secid} успешно завершена"
+            )
+
+        try:
+            postgres_data_checker.check_data_duplicates(
+                table=table, groupby_columns=["secid", "record_date"]
+            )
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на дубли данных дивидендов в postgres успешно завершена")
 
     dividends = get_dividends_by_security_from_moex()
+
     len_dividends_clickhouse = insert_dividends_clickhouse(dividends)
-    len_dividends_postgres = insert_dividends_postgres(dividends)
     check_data_dividends_clickhouse(len_dividends_clickhouse)
+
+    len_dividends_postgres = insert_dividends_postgres(dividends)
+    check_data_dividends_postgres(len_dividends_postgres)
 
 
 logger = logging.getLogger(__name__)

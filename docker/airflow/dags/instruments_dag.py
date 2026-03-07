@@ -8,6 +8,7 @@ from src.clients.moex_api_client import MOEXApiClient
 from src.clients.moex_api_mapper import MOEXAPIMapper
 from src.db.clickhouse_dao import ClickHouseDAO
 from src.db.clickhouse_data_checker import ClickHouseDataChecker
+from src.db.posgtres_data_checker import PostgresDataChecker
 from src.db.postgres_dao import PostgresDAO
 from src.models.moex_models.instrument import Instrument
 
@@ -92,20 +93,53 @@ def get_instruments_dag():
         clickhouse_dao = ClickHouseDAO(settings)
         clickhouse_data_checker = ClickHouseDataChecker(clickhouse_dao)
 
+        table = "instruments_ref"
         try:
-            clickhouse_data_checker.check_data_exists(
-                table="instruments_ref", data_length=len_instruments
-            )
+            clickhouse_data_checker.check_data_exists(table=table, data_length=len_instruments)
         except Exception as e:
             logger.error(e)
             raise Exception(e)
         else:
             logger.info(f"Проверка на наличе данных инструментов в ClickHouse успешно завершена")
 
+        try:
+            clickhouse_data_checker.check_data_duplicates(table=table, groupby_columns=["secid"])
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на дубли данных инструментов в clickhouse успешно завершена")
+
+    @task()
+    def check_data_instruments_postgres(len_instruments):
+        settings = Settings()
+        postgres_dao = PostgresDAO(settings)
+        postgres_data_checker = PostgresDataChecker(postgres_dao)
+
+        table = "instruments"
+        try:
+            postgres_data_checker.check_data_exists(table=table, data_length=len_instruments)
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на наличе данных инструментов в postgres успешно завершена")
+
+        try:
+            postgres_data_checker.check_data_duplicates(table=table, groupby_columns=["secid"])
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на дубли данных инструментов в postgres успешно завершена")
+
     instruments = get_instruments_by_security_from_moex()
+
     len_instruments_clickhouse = insert_instruments_clickhouse(instruments)
-    len_instruments_postgres = insert_instruments_postgres(instruments)
     check_data_instruments_clickhouse(len_instruments_clickhouse)
+
+    len_instruments_postgres = insert_instruments_postgres(instruments)
+    check_data_instruments_postgres(len_instruments_postgres)
 
 
 logger = logging.getLogger(__name__)
