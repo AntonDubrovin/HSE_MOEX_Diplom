@@ -124,6 +124,17 @@ def get_dividends_dag():
         else:
             logger.info(f"Проверка на дубли данных дивидендов в clickhouse успешно завершена")
 
+        try:
+            clickhouse_data_checker.check_data_not_empty(
+                table=table,
+                needed_columns=["value"]
+            )
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на пустые данные дневных агрегатов в clickhouse успешно завершена")
+
     @task()
     def check_data_dividends_postgres(len_dividends, **kwargs):
         settings = Settings()
@@ -155,6 +166,17 @@ def get_dividends_dag():
             raise Exception(e)
         else:
             logger.info(f"Проверка на дубли данных дивидендов в postgres успешно завершена")
+
+        try:
+            postgres_data_checker.check_data_not_empty(
+                table=table,
+                needed_columns=["value"]
+            )
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на пустые данные дневных агрегатов в postgres успешно завершена")
 
     dividends = get_dividends_by_security_from_moex()
 

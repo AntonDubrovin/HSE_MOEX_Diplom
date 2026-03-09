@@ -124,6 +124,17 @@ def get_daily_aggregates_dag():
                 f"Проверка на дубли данных дневных агрегатов в clickhouse успешно завершена"
             )
 
+        try:
+            clickhouse_data_checker.check_data_not_empty(
+                table=table,
+                needed_columns=["open", "close", "volume"]
+            )
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на пустые данные дневных агрегатов в clickhouse успешно завершена")
+
     daily_aggregates = get_daily_aggregates_from_moex()
     len_daily_aggregates = insert_daily_aggregates_clickhouse(daily_aggregates)
     check_data_daily_aggregates_clickhouse(len_daily_aggregates)

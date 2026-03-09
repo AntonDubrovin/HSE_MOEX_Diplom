@@ -116,6 +116,17 @@ def get_candles_dag():
         else:
             logger.info(f"Проверка на дубли данных свечей в clickhouse успешно завершена")
 
+        try:
+            clickhouse_data_checker.check_data_not_empty(
+                table=table,
+                needed_columns=["open", "close", "high", "low"]
+            )
+        except Exception as e:
+            logger.error(e)
+            raise Exception(e)
+        else:
+            logger.info(f"Проверка на пустые данные свечей в clickhouse успешно завершена")
+
     candles = get_candles_by_security_from_moex()
     len_candles = insert_candles_clickhouse(candles)
     check_data_candles_clickhouse(len_candles)
