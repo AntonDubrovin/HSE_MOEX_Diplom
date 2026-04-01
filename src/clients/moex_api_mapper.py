@@ -62,7 +62,7 @@ class MOEXAPIMapper:
             trade_date=moex_data.get("TRADEDATE"),
         )
 
-    def to_candle(self, moex_data, secid):
+    def to_candle(self, moex_data, secid, interval):
         if moex_data.get("open") is None:
             return
 
@@ -74,7 +74,7 @@ class MOEXAPIMapper:
             low=moex_data.get("low"),
             begin=moex_data.get("begin"),
             end=moex_data.get("end"),
-            interval=moex_data.get("interval", 0),
+            interval=interval,
             value=moex_data.get("value") or 0,
             volume=moex_data.get("volume") or 0,
         )

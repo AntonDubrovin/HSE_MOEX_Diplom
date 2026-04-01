@@ -118,8 +118,7 @@ def get_candles_dag():
 
         try:
             clickhouse_data_checker.check_data_not_empty(
-                table=table,
-                needed_columns=["open", "close", "high", "low"]
+                table=table, needed_columns=["open", "close", "high", "low"]
             )
         except Exception as e:
             logger.error(e)

@@ -122,14 +122,15 @@ def get_index_history_dag():
 
         try:
             clickhouse_data_checker.check_data_not_empty(
-                table=table,
-                needed_columns=["open", "close", "value"]
+                table=table, needed_columns=["open", "close", "value"]
             )
         except Exception as e:
             logger.error(e)
             raise Exception(e)
         else:
-            logger.info(f"Проверка на пустые данные истории индексов в clickhouse успешно завершена")
+            logger.info(
+                f"Проверка на пустые данные истории индексов в clickhouse успешно завершена"
+            )
 
     index_history = get_index_history_by_security_from_moex()
     len_index_history = insert_index_history_clickhouse(index_history)

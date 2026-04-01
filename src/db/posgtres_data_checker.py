@@ -50,9 +50,10 @@ class PostgresDataChecker:
         if res:
             raise Exception(f"Найдены дубли в таблице {table} | {res}")
 
-
     def check_data_not_empty(self, table, needed_columns):
-        not_empty_data_condition = " OR ".join([f"{needed_column} IS NULL" for needed_column in needed_columns])
+        not_empty_data_condition = " OR ".join(
+            [f"{needed_column} IS NULL" for needed_column in needed_columns]
+        )
         query_check_data_not_empty = f"""
             SELECT
                 COUNT(*)
@@ -64,4 +65,6 @@ class PostgresDataChecker:
         db_empty_count = self.postgres_dao.execute(query_check_data_not_empty)[0][0]
 
         if db_empty_count > 0:
-            raise Exception(f"Найдено {db_empty_count} записей с пустыми обязательными полями в таблице {table}")
+            raise Exception(
+                f"Найдено {db_empty_count} записей с пустыми обязательными полями в таблице {table}"
+            )

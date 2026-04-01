@@ -109,7 +109,7 @@ class MOEXApiClient:
         candles = []
         for row in data_all:
             moex_data = dict(zip(columns, row))
-            candle = moex_mapper.to_candle(moex_data, secid)
+            candle = moex_mapper.to_candle(moex_data, secid, params["interval"])
             if candle:
                 candles.append(candle)
         return candles
