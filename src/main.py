@@ -178,34 +178,34 @@ def go_to_api_methods(postgres_dao, clickhouse_dao):
     #     moex_mapper=moex_mapper,
     # )
     #
-    # get_current_indices(
-    #     moex_rest_client=moex_rest_client,
-    #     postgres_dao=postgres_dao,
-    #     engine="stock",
-    #     market="index",
-    #     board="SNDX",
-    #     moex_mapper=moex_mapper,
-    # )
-    #
-    get_candles(
-        moex_rest_client=moex_rest_client,
-        clickhouse_dao=clickhouse_dao,
-        from_="2020-02-24",
-        till_="2026-02-24",
-        interval_=24,
-        secid="SBER",
-        engine="stock",
-        market="shares",
-        moex_mapper=moex_mapper,
-    )
-    #
-    get_dividends(
+    get_current_indices(
         moex_rest_client=moex_rest_client,
         postgres_dao=postgres_dao,
-        clickhouse_dao=clickhouse_dao,
-        secid="SBER",
+        engine="stock",
+        market="index",
+        board="SNDX",
         moex_mapper=moex_mapper,
     )
+    #
+    # get_candles(
+    #     moex_rest_client=moex_rest_client,
+    #     clickhouse_dao=clickhouse_dao,
+    #     from_="2020-02-24",
+    #     till_="2026-02-24",
+    #     interval_=24,
+    #     secid="SBER",
+    #     engine="stock",
+    #     market="shares",
+    #     moex_mapper=moex_mapper,
+    # )
+    # #
+    # get_dividends(
+    #     moex_rest_client=moex_rest_client,
+    #     postgres_dao=postgres_dao,
+    #     clickhouse_dao=clickhouse_dao,
+    #     secid="SBER",
+    #     moex_mapper=moex_mapper,
+    # )
     #
     # get_daily_aggregates(
     #     moex_rest_client=moex_rest_client,
@@ -262,5 +262,5 @@ if __name__ == "__main__":
     postgres_dao = PostgresDAO(settings)
     clickhouse_dao = ClickHouseDAO(settings)
 
-    # go_to_api_methods(postgres_dao, clickhouse_dao)
-    go_to_websocket(postgres_dao)
+    go_to_api_methods(postgres_dao, clickhouse_dao)
+    # go_to_websocket(postgres_dao)
