@@ -178,14 +178,14 @@ def go_to_api_methods(postgres_dao, clickhouse_dao):
     #     moex_mapper=moex_mapper,
     # )
     #
-    get_current_indices(
-        moex_rest_client=moex_rest_client,
-        postgres_dao=postgres_dao,
-        engine="stock",
-        market="index",
-        board="SNDX",
-        moex_mapper=moex_mapper,
-    )
+    # get_current_indices(
+    #     moex_rest_client=moex_rest_client,
+    #     postgres_dao=postgres_dao,
+    #     engine="stock",
+    #     market="index",
+    #     board="SNDX",
+    #     moex_mapper=moex_mapper,
+    # )
     #
     # get_candles(
     #     moex_rest_client=moex_rest_client,
@@ -219,17 +219,17 @@ def go_to_api_methods(postgres_dao, clickhouse_dao):
     #     moex_mapper=moex_mapper,
     # )
 
-    # get_index_history(
-    #     moex_rest_client=moex_rest_client,
-    #     clickhouse_dao=clickhouse_dao,
-    #     from_="2025-01-01",
-    #     till_="2026-02-24",
-    #     secid="IMOEX",
-    #     engine="stock",
-    #     market="index",
-    #     board="SNDX",
-    #     moex_mapper=moex_mapper,
-    # )
+    get_index_history(
+        moex_rest_client=moex_rest_client,
+        clickhouse_dao=clickhouse_dao,
+        from_="2025-01-01",
+        till_="2026-02-24",
+        secid="IMOEX",
+        engine="stock",
+        market="index",
+        board="SNDX",
+        moex_mapper=moex_mapper,
+    )
 
 
 def go_to_websocket(postgres_dao):
@@ -262,5 +262,5 @@ if __name__ == "__main__":
     postgres_dao = PostgresDAO(settings)
     clickhouse_dao = ClickHouseDAO(settings)
 
-    go_to_api_methods(postgres_dao, clickhouse_dao)
-    # go_to_websocket(postgres_dao)
+    # go_to_api_methods(postgres_dao, clickhouse_dao)
+    go_to_websocket(postgres_dao)
