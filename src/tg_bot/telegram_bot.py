@@ -1,8 +1,8 @@
 import asyncio
 import os
 
-from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
+from dotenv import load_dotenv
 
 from src.tg_bot.handlers import router
 

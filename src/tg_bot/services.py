@@ -1,3 +1,5 @@
+import requests
+
 from config.settings import Settings
 from src.db.clickhouse_dao import ClickHouseDAO
 from src.db.postgres_dao import PostgresDAO
@@ -59,3 +61,16 @@ class Services:
         """
         res = self.postgres_dao.execute(query_index_current_price)
         return res
+
+    def trigger_dag(self, dag_id, params):
+        dag_url = f"{self.settings.AIRFLOW_BASE_URL}/api/v1/dags/{dag_id}/dagRuns"
+        auth = (self.settings.AIRFLOW_USERNAME, self.settings.AIRFLOW_PASSWORD)
+
+        print(auth)
+        print(f"sending {dag_url}")
+        response = requests.post(dag_url, auth=auth, json=params)
+        print(f"params: {params}")
+        data = response.json()
+        print(list(data.keys()))
+
+        return response

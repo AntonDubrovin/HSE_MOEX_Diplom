@@ -1,0 +1,19 @@
+services:
+  telegram-bot:
+    image: python:3.11-slim
+    container_name: moex_telegram_bot
+    working_dir: /app
+    env_file:
+      - ../../.env
+    environment:
+      POSTGRES_HOST: host.docker.internal
+      CLICKHOUSE_HOST: host.docker.internal
+      AIRFLOW_BASE_URL: http://host.docker.internal:8080
+      PYTHONPATH: /app
+    volumes:
+      - ../../src:/app/src
+      - ../../config:/app/config
+    command: >
+      bash -c "pip install aiogram psycopg2-binary clickhouse-driver pydantic pydantic-settings python-dotenv requests &&
+               python src/tg_bot/telegram_bot.py"
+    restart: unless-stopped

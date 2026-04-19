@@ -1,3 +1,5 @@
+import time
+
 import pandas as pd
 import requests
 
@@ -98,6 +100,7 @@ class MOEXApiClient:
         print(f"rows len: {len(data_all)}")
 
         while True:
+            time.sleep(0.5)
             params["start"] = len(data_all)
             data_moex_url = self.send_request(url=url, params=params)
             data = data_moex_url["candles"]["data"]
@@ -152,6 +155,7 @@ class MOEXApiClient:
         index = moex_history_cursors.get("INDEX")
 
         while index + pagesize < total:
+            time.sleep(0.5)
             url = MOEXUrls.HISTORY.format(engine=engine, market=market, board=board, secid=secid)
             params["start"] = index + pagesize
             data_moex_url = self.send_request(url=url, params=params)
@@ -201,6 +205,7 @@ class MOEXApiClient:
         index = moex_history_cursors.get("INDEX")
 
         while index + pagesize < total:
+            time.sleep(0.5)
             url = MOEXUrls.HISTORY.format(engine=engine, market=market, board=board, secid=secid)
             params["start"] = index + pagesize
             data_moex_url = self.send_request(url=url, params=params)
