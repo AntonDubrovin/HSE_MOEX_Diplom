@@ -1,0 +1,17 @@
+services:
+  websocket:
+    image: python:3.11-slim
+    container_name: moex_websocket
+    working_dir: /app
+    env_file:
+      - ../../.env
+    environment:
+      POSTGRES_HOST: host.docker.internal
+      PYTHONPATH: /app
+    volumes:
+      - ../../src:/app/src
+      - ../../config:/app/config
+    command: >
+      bash -c "pip install psycopg2-binary clickhouse-driver pydantic pydantic-settings python-dotenv stomp.py websockets &&
+               python src/websocket/websocket_main.py"
+    restart: unless-stopped
