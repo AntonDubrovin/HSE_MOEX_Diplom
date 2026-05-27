@@ -4,6 +4,17 @@
     - здесь описаны все yml файлы для контейнеров,
     - написан код всех DAG в docker/airflow/dags
     - описаны init.sql файлы postgre и clickhouse для инициализации БД с созданием таблиц
+- src - здесь приведен основной код системы:
+    - clients - работа с MOEX API:
+        - обращение к API по REST, соответствующие мапперы в Pydantic модели
+        - обращение к MOEX через WebSocket, соответствующие мапперы в Pydantic модели
+    - db - работа с БД:
+        - аналитические витрины данных в виде VIEW ClickHouse
+        - DAO классы PH и CH
+        - Классы для контроля данных
+    - models - здесь описаны все сущности MOEX, с которыми ведется работа, в виде Pydantic моделей
+    - tg_bot - работа с Телеграм-ботом
+    - websocket - работа с WebSocket сервисом
     
 
 ```
@@ -32,7 +43,6 @@
 │   └── websocket
 │       └── docker-compose.yml
 ├── requirements.txt
-├── scripts
 └── src
     ├── clients
     │   ├── moex_api_client.py
