@@ -1,9 +1,9 @@
 Ниже приведена структура проекта.
-config/settings.py - здесь содержатся настройки для postgres, clickhouse, airflow
-docker:
-    здесь описаны все yml файлы для контейнеров,
-    написан код всех DAG в docker/airflow/dags
-    описаны init.sql файлы postgre и clickhouse для инициализации БД с созданием таблиц
+- config/settings.py - здесь содержатся настройки для postgres, clickhouse, airflow
+- docker:
+    - здесь описаны все yml файлы для контейнеров,
+    - написан код всех DAG в docker/airflow/dags
+    - описаны init.sql файлы postgre и clickhouse для инициализации БД с созданием таблиц
     
 
 ```
