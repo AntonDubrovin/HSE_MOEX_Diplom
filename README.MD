@@ -12,6 +12,13 @@
 
 Архитектуру системы можно посмотреть [здесь](docs/ВКР%20схема/MOEX_diplom_schema.drawio.png)
 
+Схему БД PostgreSQL можно посмотреть [здесь](docs/db/OLTP.drawio.png)
+
+Схему БД ClickHouse можно посмотреть [здесь](docs/db/OLAP.drawio.png)
+
+Сравнительную таблицу с аналогами анализа биржевых данных можно посмотреть [здесь](docs/сравнительная таблица.png)
+
+
 Ниже приведена структура проекта.
 - config/settings.py - здесь содержатся настройки для postgres, clickhouse, airflow
 - docker:
